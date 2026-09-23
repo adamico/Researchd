@@ -12,4 +12,4 @@
 - [ ] The client starts, a world with the default Researchd datapack loads, and the research screen opens
 - [ ] Manual: the Research Lab forms, accepts Research Packs through a Lab Part, and completes a research
 - [ ] Manual: team create, join and leave work with native teams
-- [ ] Anything noted by 03–06 is either fixed or filed as a follow-up ticket
+- [ ] Anything noted by 03–06 (see the Notes in 03) is either fixed or filed as a follow-up ticket
