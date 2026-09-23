@@ -1,10 +1,10 @@
 # 01 — Lab Energy Draw GameTests on 1.21.1
 
-**What to build:** On `lab-energy` (1.21.1), the GameTest server runs the Lab Energy Draw scenarios against a real Research Lab and passes. These tests are the reference behaviour the 26.1 port must match, and they strengthen the open upstream PR. Each test builds a Research Lab from a structure, gives a team a current research, stocks Research Packs and supplies energy through a Lab Part, ticks the world, then checks only what a player could see.
+**What to build:** On `lab-energy` (1.21.1), the GameTest server runs the Lab Energy Draw scenarios against a real Research Lab and passes. These tests are the reference behaviour the 26.1 port must match. They are not pushed to the upstream PR: `lab-energy` is the PR's head branch, so these commits stay local and reach the fork only through `26.1`. Each test builds a Research Lab from a structure, gives a team a current research, stocks Research Packs and supplies energy through a Lab Part, ticks the world, then checks only what a player could see.
 
 **Blocked by:** None — can start immediately
 
-**Status:** done (commits 101f616, 2fdf315 on lab-energy; push left to maintainer)
+**Status:** done (commits 101f616, 2fdf315 on lab-energy; not pushed to the PR by decision)
 
 - [x] Draw 0: the Lab progresses and ignores energy
 - [x] Draw above 0 with an empty buffer: no progress, no Research Pack used, no energy taken
@@ -13,7 +13,7 @@
 - [x] Energy inserted through a Lab Part is accepted; extracting through a Lab Part gets nothing
 - [x] The gameTestServer run passes on a clean checkout
 - [x] Tests set the Lab Energy Draw config per test and restore it afterwards
-- [ ] Pushing to the upstream PR is left to the maintainer
+- [x] Not pushed to the upstream PR (decision: the GameTests stay off the PR)
 
 **Notes from implementation:**
 - Tests live in the `gametest` source set: `src/gametest/java/.../gametest/LabEnergyDrawTests.java`, with the template `src/gametest/resources/data/researchd/structure/empty_7x7x7.nbt`.

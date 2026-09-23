@@ -87,7 +87,7 @@ GameTests check the Lab Energy Draw rules and recipe locking. Once they pass, un
 
 42. As the maintainer, I want the port on its own long-lived `26.1` branch, so that each MC version line evolves independently (ADR 0001).
 43. As the maintainer, I want the port to start from the Lab Energy Draw branch, so that the energy feature and the config write-back fix come along automatically.
-44. As the maintainer, I want GameTests for the Lab Energy Draw on 1.21.1 first, so that they define the reference behaviour and strengthen the open upstream PR.
+44. As the maintainer, I want GameTests for the Lab Energy Draw on 1.21.1 first, so that they define the reference behaviour. They stay off the upstream PR.
 45. As the maintainer, I want the same scenarios rewritten as 26.1 GameTests, so that the port provably behaves like 1.21.1.
 46. As the maintainer, I want GameTests for recipe locking on 26.1, so that the rewritten recipe hooks are guarded.
 47. As the maintainer, I want the excluded integrations to stay in the source tree but out of compilation, so that bringing one back is a small build change.
@@ -230,7 +230,6 @@ The shared "is this recipe Locked for this Team Context" check is rewritten for 
   - M6: Jade
   - M7: every GameTest passes and the manual checklist is done
 - **Steps the maintainer takes personally:**
-  - pushing the M0 tests to the upstream Lab Energy Draw PR
   - opening the Porting-Dead-Libs config PR
   - publishing GitHub Releases
 - **Open risks:**
