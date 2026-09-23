@@ -225,6 +225,7 @@ The shared "is this recipe Locked for this Team Context" check is rewritten for 
   - M1: build setup and integration exclusions
   - M2: the core compiles and the game loads
   - M3: Research Lab on PDL handlers, with the energy GameTests rewritten for 26.1
+    - Ticket 08 is the only work that opens once 07 is done; 12 and 15 wait for it too, so the Lab is under test before anything else lands.
   - M4: recipe-locking parity and its GameTests
   - M5: JEI and FTB Teams
   - M6: Jade

@@ -2,7 +2,7 @@
 
 **What to build:** When FTB Teams is installed, Researchd uses it for teams, as on 1.21.1. Without it, native teams still work.
 
-**Blocked by:** 07 — Integrate
+**Blocked by:** 08 — Lab Energy Draw on 26.1 (runs right after 07, so the Lab is under test before anything else lands)
 
 **Status:** ready-for-agent
 
