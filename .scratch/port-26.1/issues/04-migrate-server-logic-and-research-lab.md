@@ -16,3 +16,4 @@
 - [ ] The Locked-dimension mixin is removed from the mixin config, with a marker pointing to 11
 - [ ] The reload-listener hook targets the 26.1 server-resources constructor
 - [ ] Effect data is still synced to all players (parity)
+- [ ] No references remain to compat classes that 02 took out of the source set: `ResearchTeamImpl` (`KubeJSCompat`), `ResearchdLifecycleHandler` (`FTBTeamsCompat`, marker to 15), `ExampleCommands` (`KubeJSCompat`, `KubeJSExample`)

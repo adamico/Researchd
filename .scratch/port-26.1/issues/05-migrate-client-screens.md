@@ -12,3 +12,4 @@
 - [ ] The recipe-unlock info widget shows only the recipe id and the result icon for now, with a marker pointing to 12
 - [ ] The red tooltip on Locked items is kept (rename only)
 - [ ] Layout and visuals are meant to match 1.21.1; differences are noted for the checklist in 07
+- [ ] No references remain to compat classes that 02 took out of the source set: `ResearchdClient` (IE multiblock effect widget), `compat/RecipeViewerHelper` (`EMICompat`, `JEICompat`, marker to 14)

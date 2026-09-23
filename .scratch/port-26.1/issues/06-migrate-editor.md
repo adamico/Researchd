@@ -10,3 +10,4 @@
 - [ ] The editor uses the 26.1 render-state GUI
 - [ ] The recipe-unlock editor object no longer reads the client's recipe manager; its picker temporarily accepts a recipe id only, with a marker pointing to 13
 - [ ] Item selector widgets still work, using the 26.1 item and template types
+- [ ] No references remain to compat classes that 02 took out of the source set: `DefaultItemSelectorCategory` (`JEICompat`, marker to 14)

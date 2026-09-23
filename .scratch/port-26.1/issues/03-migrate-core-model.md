@@ -12,3 +12,4 @@
 - [ ] Recipe ids referenced by Research Effects and effect data become recipe resource keys
 - [ ] Saved data uses the 26.1 storage API
 - [ ] Behaviour is unchanged apart from API renames; anything that can't migrate mechanically is noted in the ticket for 07
+- [ ] No references remain to compat classes that 02 took out of the source set: `ResearchEffectSerializers` and `ResearchdEffectDataTypes` (IE multiblock effect), `ReloadableRegistryManager` (`KubeJSCompat`)
