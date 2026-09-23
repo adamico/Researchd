@@ -24,7 +24,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 public record SimpleResearch(
         ResearchIcon researchIcon,
@@ -82,7 +81,7 @@ public record SimpleResearch(
                                 .forGetter(SimpleResearch::display))
                 .apply(instance, SimpleResearch::new));
         public static final StreamCodec<? super RegistryFriendlyByteBuf, SimpleResearch> STREAM_CODEC =
-                NeoForgeStreamCodecs.composite(
+                StreamCodec.composite(
                         ResearchIcon.STREAM_CODEC,
                         SimpleResearch::researchIcon,
                         ResearchMethod.STREAM_CODEC,

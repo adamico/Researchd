@@ -1,14 +1,9 @@
 package com.portingdeadmods.researchd.api;
 
-import com.portingdeadmods.researchd.impl.research.effect.data.ItemUnlockEffectData;
-import com.portingdeadmods.researchd.registries.ResearchdEffectDataTypes;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
 import java.util.UUID;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -66,20 +61,8 @@ public final class RecipeFilterContext {
         Level level = frame.level();
         if (ResearchdApi.isRecipeBlocked(level, frame.teamId(), holder)) return true;
 
-        ItemUnlockEffectData itemData =
-                ResearchdApi.getEffectDataForTeam(level, frame.teamId(), ResearchdEffectDataTypes.ITEM_UNLOCK);
-        if (itemData == null || itemData.blockedItems().isEmpty()) return false;
-
-        Recipe<?> recipe = holder.value();
-        ItemStack result = recipe.getResultItem(level.registryAccess());
-        if (!result.isEmpty() && itemData.isBlocked(result)) return true;
-
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            if (ingredient.isEmpty()) continue;
-            for (ItemStack stack : ingredient.items()) {
-                if (!stack.isEmpty() && itemData.isBlocked(stack)) return true;
-            }
-        }
+        // TODO(26.1 port, 09/10): the "result or any ingredient is a Locked item" half of this rule needs
+        // the 26.1 recipe API (recipe displays and placement info). Until then only Locked recipe ids count.
         return false;
     }
 

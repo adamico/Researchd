@@ -59,7 +59,7 @@ public final class EnUsLangProvider extends LanguageProvider {
 
     private <T> void addRegistryObject(Registry<T> registry, T value, String name) {
         Identifier objLoc = registry.getKey(value);
-        String registryPath = registry.key().location().getPath();
+        String registryPath = registry.key().identifier().getPath();
         this.add(registryPath + "." + objLoc.getNamespace() + "." + objLoc.getPath(), name);
     }
 

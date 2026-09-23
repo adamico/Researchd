@@ -1,6 +1,6 @@
 package com.portingdeadmods.researchd.impl.research.effect;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.api.research.effects.ResearchEffect;
@@ -16,7 +16,7 @@ public class EmptyResearchEffect implements ResearchEffect {
     public static final EmptyResearchEffect INSTANCE = new EmptyResearchEffect();
     public static final Identifier ID = Researchd.rl("empty");
     public static final ResearchEffectSerializer<EmptyResearchEffect> SERIALIZER =
-            ResearchEffectSerializer.simple(Codec.unit(INSTANCE).fieldOf("instance"), null);
+            ResearchEffectSerializer.simple(MapCodec.unitCodec(INSTANCE).fieldOf("instance"), null);
 
     private EmptyResearchEffect() {}
 

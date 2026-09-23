@@ -18,6 +18,9 @@ import com.portingdeadmods.researchd.registries.ResearchdEffectDataTypes;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,23 +28,28 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
-public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name, Set<Identifier> recipes)
+public record RecipeUnlockEffect(
+        Optional<ItemStackTemplate> icon, Optional<String> name, Set<ResourceKey<Recipe<?>>> recipes)
         implements ResearchEffect {
     private static final MapCodec<RecipeUnlockEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    ItemStack.CODEC.optionalFieldOf("icon").forGetter(RecipeUnlockEffect::icon),
+                    ItemStackTemplate.CODEC.optionalFieldOf("icon").forGetter(RecipeUnlockEffect::icon),
                     Codec.STRING.optionalFieldOf("name").forGetter(RecipeUnlockEffect::name),
-                    CodecUtils.set(Identifier.CODEC).fieldOf("recipes").forGetter(RecipeUnlockEffect::recipes))
+                    CodecUtils.set(ResourceKey.codec(Registries.RECIPE))
+                            .fieldOf("recipes")
+                            .forGetter(RecipeUnlockEffect::recipes))
             .apply(instance, RecipeUnlockEffect::new));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, RecipeUnlockEffect> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.optional(ItemStack.STREAM_CODEC),
+            ByteBufCodecs.optional(ItemStackTemplate.STREAM_CODEC),
             RecipeUnlockEffect::icon,
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
             RecipeUnlockEffect::name,
-            Identifier.STREAM_CODEC.apply(ByteBufCodecs.collection(HashSet::new)),
+            ResourceKey.streamCodec(Registries.RECIPE).apply(ByteBufCodecs.collection(HashSet::new)),
             RecipeUnlockEffect::recipes,
             RecipeUnlockEffect::new);
 
@@ -50,11 +58,20 @@ public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name
     public static final Identifier ID = Researchd.rl("unlock_recipe");
 
     public RecipeUnlockEffect(ItemStack icon, String name, Identifier... recipes) {
-        this(Optional.ofNullable(icon), Optional.ofNullable(name), Set.of(recipes));
+        this(
+                Optional.ofNullable(icon).filter(stack -> !stack.isEmpty()).map(ItemStackTemplate::fromNonEmptyStack),
+                Optional.ofNullable(name),
+                recipeKeys(recipes));
     }
 
     public RecipeUnlockEffect(Identifier... recipes) {
-        this(Optional.empty(), Optional.empty(), Set.of(recipes));
+        this(Optional.empty(), Optional.empty(), recipeKeys(recipes));
+    }
+
+    private static Set<ResourceKey<Recipe<?>>> recipeKeys(Identifier... recipes) {
+        return Stream.of(recipes)
+                .map(id -> ResourceKey.create(Registries.RECIPE, id))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -93,9 +110,10 @@ public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name
 
     public Set<RecipeHolder<?>> getRecipes(Level level) {
         Set<RecipeHolder<?>> recipes = new HashSet<>(this.recipes.size());
-        for (Identifier recipe : this.recipes) {
-            Optional<RecipeHolder<?>> recipeHolder = level.recipeAccess().byKey(recipe);
-            recipeHolder.ifPresent(recipes::add);
+        if (level instanceof ServerLevel serverLevel) {
+            for (ResourceKey<Recipe<?>> recipe : this.recipes) {
+                serverLevel.recipeAccess().byKey(recipe).ifPresent(recipes::add);
+            }
         }
         return recipes;
     }

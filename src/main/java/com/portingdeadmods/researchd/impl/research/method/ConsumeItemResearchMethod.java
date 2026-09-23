@@ -26,7 +26,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public record ConsumeItemResearchMethod(Ingredient item, int count) implements ItemResearchMethod {
-    public static final ConsumeItemResearchMethod EMPTY = new ConsumeItemResearchMethod(Ingredient.EMPTY, 0);
     public static final Identifier ID = Researchd.rl("consume_item");
 
     @Override

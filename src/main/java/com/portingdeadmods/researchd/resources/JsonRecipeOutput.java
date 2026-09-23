@@ -7,6 +7,7 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Recipe;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import org.jetbrains.annotations.Nullable;
@@ -22,8 +23,14 @@ public record JsonRecipeOutput(Map<Identifier, Recipe<?>> recipes) implements Re
     }
 
     @Override
+    public void includeRootAdvancement() {}
+
+    @Override
     public void accept(
-            Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
-        this.recipes.put(id, recipe);
+            ResourceKey<Recipe<?>> id,
+            Recipe<?> recipe,
+            @Nullable AdvancementHolder advancement,
+            ICondition... conditions) {
+        this.recipes.put(id.identifier(), recipe);
     }
 }

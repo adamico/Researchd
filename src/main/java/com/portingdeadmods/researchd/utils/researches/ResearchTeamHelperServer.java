@@ -188,7 +188,7 @@ public final class ResearchTeamHelperServer {
     }
 
     public static void handleLeaveTeam(@NotNull ServerPlayer requester, @Nullable UUID nextToLead) {
-        MinecraftServer server = requester.getServer();
+        MinecraftServer server = requester.level().getServer();
         ServerLevel level = server.overworld();
         UUID requesterId = requester.getUUID();
 
@@ -242,7 +242,7 @@ public final class ResearchTeamHelperServer {
     }
 
     public static void handleManageMember(@NotNull ServerPlayer requester, UUID member, boolean remove) {
-        MinecraftServer server = requester.getServer();
+        MinecraftServer server = requester.level().getServer();
         ServerLevel level = server.overworld();
         ResearchTeamMap teamManager = (ResearchTeamMap) ResearchdApi.getTeamManager(level);
 
@@ -300,7 +300,7 @@ public final class ResearchTeamHelperServer {
     }
 
     public static void handleManageModerator(@NotNull ServerPlayer requester, UUID moderator, boolean remove) {
-        MinecraftServer server = requester.getServer();
+        MinecraftServer server = requester.level().getServer();
         ServerLevel level = server.overworld();
 
         // Error Safety (handling yourself)
@@ -342,7 +342,7 @@ public final class ResearchTeamHelperServer {
 
     public static void handleSetName(@NotNull ServerPlayer requester, String name) {
         UUID requesterId = requester.getUUID();
-        MinecraftServer server = requester.getServer();
+        MinecraftServer server = requester.level().getServer();
         ServerLevel level = server.overworld();
         ResearchTeamMap teamManager = (ResearchTeamMap) ResearchdApi.getTeamManager(level);
 
@@ -371,7 +371,7 @@ public final class ResearchTeamHelperServer {
     }
 
     public static void handleTransferOwnership(@NotNull ServerPlayer requester, UUID nextToLead) {
-        MinecraftServer server = requester.getServer();
+        MinecraftServer server = requester.level().getServer();
         ServerLevel level = server.overworld();
         UUID requesterId = requester.getUUID();
         ResearchTeamMap teamManager = (ResearchTeamMap) ResearchdApi.getTeamManager(level);
@@ -455,13 +455,11 @@ public final class ResearchTeamHelperServer {
                         .append(Component.literal("\n"))
                         .append("     ")
                         .append(ResearchdTranslations.component(ResearchdTranslations.Team.ACCEPT)
-                                .withStyle(style -> style.withClickEvent(new net.minecraft.network.chat.ClickEvent(
-                                        ClickEvent.Action.RUN_COMMAND,
+                                .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand(
                                         "/researchd team join " + AllPlayersCache.getName(requester.getUUID())))))
                         .append("     ")
                         .append(ResearchdTranslations.component(ResearchdTranslations.Team.DECLINE)
-                                .withStyle(style -> style.withClickEvent(new net.minecraft.network.chat.ClickEvent(
-                                        ClickEvent.Action.RUN_COMMAND,
+                                .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand(
                                         "/researchd team ignore " + AllPlayersCache.getName(requester.getUUID()))))));
             }
             if (!ResearchdCompatHandler.isFTBTeamsEnabled())

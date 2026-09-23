@@ -14,9 +14,7 @@ import com.portingdeadmods.researchd.impl.TeamResearchEffectDataMap;
 import com.portingdeadmods.researchd.impl.research.effect.data.ItemUnlockEffectData;
 import com.portingdeadmods.researchd.registries.ResearchEffectTypes;
 import com.portingdeadmods.researchd.registries.ResearchdEffectDataTypes;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -27,22 +25,19 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.Level;
 
-public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, Identifier item)
+public record ItemUnlockEffect(Optional<ItemStackTemplate> icon, Optional<String> name, Identifier item)
         implements ResearchEffect {
     private static final MapCodec<ItemUnlockEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    ItemStack.CODEC.optionalFieldOf("icon").forGetter(ItemUnlockEffect::icon),
+                    ItemStackTemplate.CODEC.optionalFieldOf("icon").forGetter(ItemUnlockEffect::icon),
                     Codec.STRING.optionalFieldOf("name").forGetter(ItemUnlockEffect::name),
                     Identifier.CODEC.fieldOf("item").forGetter(ItemUnlockEffect::item))
             .apply(instance, ItemUnlockEffect::new));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, ItemUnlockEffect> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.optional(ItemStack.STREAM_CODEC),
+            ByteBufCodecs.optional(ItemStackTemplate.STREAM_CODEC),
             ItemUnlockEffect::icon,
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
             ItemUnlockEffect::name,
@@ -55,7 +50,10 @@ public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, 
     public static final Identifier ID = Researchd.rl("unlock_item");
 
     public ItemUnlockEffect(ItemStack icon, String name, Identifier item) {
-        this(Optional.ofNullable(icon), Optional.ofNullable(name), item);
+        this(
+                Optional.ofNullable(icon).filter(stack -> !stack.isEmpty()).map(ItemStackTemplate::fromNonEmptyStack),
+                Optional.ofNullable(name),
+                item);
     }
 
     public ItemUnlockEffect(Identifier item) {
@@ -99,43 +97,11 @@ public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, 
     }
 
     public Item getItem() {
-        return BuiltInRegistries.ITEM.get(this.item);
+        return BuiltInRegistries.ITEM.getValue(this.item);
     }
 
     public ItemStack getDisplayStack() {
-        return this.icon().map(ItemStack::copy).orElseGet(() -> new ItemStack(this.getItem()));
-    }
-
-    public Set<RecipeHolder<?>> getRecipes(Level level) {
-        Item target = this.getItem();
-        if (target == Items.AIR) {
-            return Set.of();
-        }
-
-        Set<RecipeHolder<?>> recipes = new HashSet<>();
-        for (RecipeHolder<?> holder : level.recipeAccess().getRecipes()) {
-            Recipe<?> recipe = holder.value();
-            ItemStack resultStack = recipe.getResultItem(level.registryAccess());
-            boolean matchesResult = resultStack.is(target);
-            boolean matchesIngredient =
-                    recipe.getIngredients().stream().anyMatch(ingredient -> ingredientMatches(ingredient, target));
-            if (matchesResult || matchesIngredient) {
-                recipes.add(holder);
-            }
-        }
-        return recipes;
-    }
-
-    private boolean ingredientMatches(Ingredient ingredient, Item target) {
-        if (ingredient.isEmpty()) {
-            return false;
-        }
-        for (ItemStack stack : ingredient.items()) {
-            if (stack.is(target)) {
-                return true;
-            }
-        }
-        return false;
+        return this.icon().map(ItemStackTemplate::create).orElseGet(() -> new ItemStack(this.getItem()));
     }
 
     public ResourceKey<Item> getItemKey() {

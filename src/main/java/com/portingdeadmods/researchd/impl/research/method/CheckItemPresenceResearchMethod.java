@@ -26,14 +26,12 @@ import org.jetbrains.annotations.NotNull;
  * Research method that completes once the team collectively holds the required amount of the item ingredient.
  */
 public record CheckItemPresenceResearchMethod(Ingredient item, int count) implements ItemResearchMethod {
-    public static final CheckItemPresenceResearchMethod EMPTY =
-            new CheckItemPresenceResearchMethod(Ingredient.EMPTY, 0);
     public static final Identifier ID = Researchd.rl("check_item_presence");
 
     @Override
     public void checkProgress(
             Level level, ResourceKey<Research> research, ResearchProgress.Task task, MethodContext context) {
-        if (this.count <= 0 || this.item == Ingredient.EMPTY) {
+        if (this.count <= 0) {
             task.addProgress(this.getMaxProgress() - task.getProgress());
             return;
         }

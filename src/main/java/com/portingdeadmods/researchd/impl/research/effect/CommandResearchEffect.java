@@ -75,7 +75,7 @@ public record CommandResearchEffect(String onUnlockCommand, String onLockCommand
                                     source,
                                     parsed.replace(
                                             PLAYER_NAME_PLACEHOLDER,
-                                            player.getGameProfile().getName()));
+                                            player.getGameProfile().name()));
                 }
             }
         } else {

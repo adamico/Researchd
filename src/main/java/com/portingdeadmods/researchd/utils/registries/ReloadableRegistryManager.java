@@ -3,22 +3,16 @@ package com.portingdeadmods.researchd.utils.registries;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.portingdeadmods.researchd.Researchd;
-import com.portingdeadmods.researchd.ResearchdRegistries;
-import com.portingdeadmods.researchd.api.research.Research;
-import com.portingdeadmods.researchd.compat.KubeJSCompat;
-import com.portingdeadmods.researchd.impl.research.ResearchPackImpl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -26,62 +20,35 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.Nullable;
 
-public class ReloadableRegistryManager<T> extends SimpleJsonResourceReloadListener {
+public class ReloadableRegistryManager<T> extends SimpleJsonResourceReloadListener<T> {
     public static final Gson GSON =
             new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private final HolderLookup.Provider lookup;
     private final ResourceKey<Registry<T>> registry;
-    private final Codec<T> codec;
     private @Nullable Map<ResourceKey<T>, T> byName;
     private boolean failed;
 
     public ReloadableRegistryManager(HolderLookup.Provider lookup, ResourceKey<Registry<T>> registry, Codec<T> codec) {
-        super(GSON, Registries.elementsDirPath(registry));
+        super(codec, FileToIdConverter.registry(registry));
         this.lookup = lookup;
         this.registry = registry;
-        this.codec = codec;
     }
 
     // TODO: Replace with linked hashmap and sort it
     @Override
     protected void apply(
-            Map<Identifier, JsonElement> registryEntries,
-            ResourceManager resourceManager,
-            ProfilerFiller profilerFiller) {
+            Map<Identifier, T> registryEntries, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         ImmutableMap.Builder<ResourceKey<T>, T> builder = ImmutableMap.builder();
 
-        for (Map.Entry<Identifier, JsonElement> entry : registryEntries.entrySet()) {
+        for (Map.Entry<Identifier, T> entry : registryEntries.entrySet()) {
             Identifier location = entry.getKey();
             if (!location.getPath().startsWith("_")) {
-                try {
-                    DataResult<Pair<T, JsonElement>> result =
-                            this.codec.decode(this.makeConditionalOps(), entry.getValue());
-                    ResourceKey<T> key = ResourceKey.create(this.registry, location);
-                    result.ifSuccess(pair -> {
-                        builder.put(key, pair.getFirst());
-                    });
-                } catch (Exception e) {
-                    Researchd.LOGGER.error("Parsing error loading registry entry {}", location, e);
-                }
+                builder.put(ResourceKey.create(this.registry, location), entry.getValue());
             }
         }
 
-        if (this.registry.equals(ResearchdRegistries.RESEARCH_KEY)) {
-            Map<Identifier, Research> kubeJSResearches = KubeJSCompat.getKubeJSResearches();
-            for (Map.Entry<Identifier, Research> entry : kubeJSResearches.entrySet()) {
-                ResourceKey<T> key = ResourceKey.create(this.registry, entry.getKey());
-                builder.put(key, (T) entry.getValue());
-            }
-            Researchd.LOGGER.info("Loaded {} KubeJS researches", kubeJSResearches.size());
-        } else if (this.registry.equals(ResearchdRegistries.RESEARCH_PACK_KEY)) {
-            Map<Identifier, ResearchPackImpl> kubeJSPacks = KubeJSCompat.getKubeJSResearchPacks();
-            for (Map.Entry<Identifier, ResearchPackImpl> entry : kubeJSPacks.entrySet()) {
-                ResourceKey<T> key = ResourceKey.create(this.registry, entry.getKey());
-                builder.put(key, (T) entry.getValue());
-            }
-            Researchd.LOGGER.info("Loaded {} KubeJS researchPack packs", kubeJSPacks.size());
-        }
+        // KubeJS researches and Research Packs were merged in here; they come back with KubeJS 8 (26.1 port spec).
 
         this.byName = builder.build();
         Researchd.LOGGER.info("Loaded {} entries for registry {}", this.byName.size(), this.registry.identifier());

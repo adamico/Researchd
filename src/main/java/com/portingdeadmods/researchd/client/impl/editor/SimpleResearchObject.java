@@ -17,14 +17,12 @@ import com.portingdeadmods.researchd.utils.GuiUtils;
 import com.portingdeadmods.researchd.utils.TextUtils;
 import com.portingdeadmods.researchd.utils.researches.ResearchEditorHelperClient;
 import java.util.Collections;
-import java.util.List;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -80,8 +78,8 @@ public class SimpleResearchObject implements StandaloneEditorObject<SimpleResear
                     previous.display().name().orElse(Component.empty()).getString());
             descEditBox.setValue(
                     previous.display().desc().orElse(Component.empty()).getString());
-            if (previous.researchIcon() instanceof ItemResearchIcon(List<ItemStack> items)) {
-                itemSelectorWidget.setSelected(items, false);
+            if (previous.researchIcon() instanceof ItemResearchIcon icon) {
+                itemSelectorWidget.setSelected(icon.stacks(), false);
             }
             pageEditBox.setValue(previous.researchPage().toString());
             pageEditBox.setValue(ResearchPage.DEFAULT_PAGE_ID.toString());

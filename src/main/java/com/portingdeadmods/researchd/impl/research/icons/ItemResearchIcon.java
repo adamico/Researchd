@@ -7,11 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.ItemLike;
 
-public record ItemResearchIcon(List<ItemStack> items) implements ResearchIcon {
+public record ItemResearchIcon(List<ItemStackTemplate> items) implements ResearchIcon {
     public static final ResearchIconSerializer<ItemResearchIcon> SERIALIZER =
-            ResearchIconSerializer.simple(ItemStack.OPTIONAL_CODEC
+            ResearchIconSerializer.simple(ItemStackTemplate.CODEC
                     .listOf()
                     .xmap(ItemResearchIcon::new, ItemResearchIcon::items)
                     .fieldOf("items"));
@@ -28,11 +29,22 @@ public record ItemResearchIcon(List<ItemStack> items) implements ResearchIcon {
         return SERIALIZER;
     }
 
+    public List<ItemStack> stacks() {
+        return this.items.stream().map(ItemStackTemplate::create).toList();
+    }
+
+    public static ItemResearchIcon ofStacks(List<ItemStack> stacks) {
+        return new ItemResearchIcon(stacks.stream()
+                .filter(stack -> !stack.isEmpty())
+                .map(ItemStackTemplate::fromNonEmptyStack)
+                .toList());
+    }
+
     public static ItemResearchIcon single(ItemStack stack) {
-        return new ItemResearchIcon(Collections.singletonList(stack));
+        return ofStacks(Collections.singletonList(stack));
     }
 
     public static ItemResearchIcon single(ItemLike item) {
-        return new ItemResearchIcon(Collections.singletonList(new ItemStack(item)));
+        return single(new ItemStack(item));
     }
 }

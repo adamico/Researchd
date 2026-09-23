@@ -15,7 +15,7 @@ public class ClientItemResearchIcon implements ClientResearchIcon<ItemResearchIc
 
     public ClientItemResearchIcon(ItemResearchIcon icon) {
         this.icon = icon;
-        List<ItemStack> stacks = icon.items();
+        List<ItemStack> stacks = icon.stacks();
         this.renderer = new CycledItemRenderer(stacks.size());
         this.renderer.setItems(stacks);
     }

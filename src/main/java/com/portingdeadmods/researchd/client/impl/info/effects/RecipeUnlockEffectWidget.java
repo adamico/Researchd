@@ -37,7 +37,7 @@ public class RecipeUnlockEffectWidget extends AbstractResearchInfoWidget<RecipeU
                 .map(r -> r.getResultItem(Minecraft.getInstance().level.registryAccess()))
                 .toList();
         if (effect.icon().isPresent()) {
-            this.icon = effect.icon().get();
+            this.icon = effect.icon().get().create();
             this.itemRenderer = null;
             new CycledItemRenderer();
         } else {

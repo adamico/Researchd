@@ -21,7 +21,7 @@ public class EditorDatapackWriter implements PackWriter {
     }
 
     public <P extends ResearchdDatagenProvider<?>> P getOrAddProvider(P provider) {
-        return (P) this.providers.computeIfAbsent(provider.registry().location(), key -> provider);
+        return (P) this.providers.computeIfAbsent(provider.registry().identifier(), key -> provider);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class EditorDatapackWriter implements PackWriter {
         for (ResearchdDatagenProvider<?> provider : this.providers.values()) {
             provider.build();
             Path path = packResearchdRegistriesDir.resolve(
-                    provider.registry().location().getPath());
+                    provider.registry().identifier().getPath());
             tryCreateDirectory(path);
             Result<Unit, Exception> result = provider.write(path);
             if (result instanceof Result.Err<Unit, Exception>(Exception error)) {
