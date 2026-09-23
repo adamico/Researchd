@@ -141,7 +141,7 @@ public class ConsumePackMethodObject implements TypedEditorObject<ConsumePackRes
                 layout.getChild("pack_selector", ItemSelectorWidget.class).getSelected();
         return new ConsumePackResearchMethod(
                 List.of(selectedPack
-                        .getItems()[0]
+                        .items()[0]
                         .get(ResearchdDataComponents.RESEARCH_PACK)
                         .researchPackKey()
                         .get()),
@@ -154,9 +154,9 @@ public class ConsumePackMethodObject implements TypedEditorObject<ConsumePackRes
         Ingredient selectedPack =
                 layout.getChild("pack_selector", ItemSelectorWidget.class).getSelected();
         if (selectedPack.isEmpty()
-                || !selectedPack.getItems()[0].has(ResearchdDataComponents.RESEARCH_PACK)
+                || !selectedPack.items()[0].has(ResearchdDataComponents.RESEARCH_PACK)
                 || selectedPack
-                        .getItems()[0]
+                        .items()[0]
                         .get(ResearchdDataComponents.RESEARCH_PACK)
                         .researchPackKey()
                         .isEmpty()) {

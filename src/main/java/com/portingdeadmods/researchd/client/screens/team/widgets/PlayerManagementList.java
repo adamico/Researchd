@@ -11,15 +11,15 @@ import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import java.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PlayerManagementList extends ContainerWidget<PlayerManagementList.Entry> {
-    public static final ResourceLocation PLAYER_ENTRY_TEXTURE = Researchd.rl("player");
+    public static final Identifier PLAYER_ENTRY_TEXTURE = Researchd.rl("player");
     private final Map<Entry, List<DraggableWidgetImageButton>> buttonWidgets;
     private final AbstractWidget parent;
 
@@ -119,7 +119,7 @@ public class PlayerManagementList extends ContainerWidget<PlayerManagementList.E
 
     @Override
     public void internalRenderItem(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             PlayerManagementList.Entry item,
             int xIndex,
             int index,
@@ -157,7 +157,7 @@ public class PlayerManagementList extends ContainerWidget<PlayerManagementList.E
             poseStack.translate(0, 0, RdZIndex.DRAGGABLE_WINDOW_ROW_BUTTONS);
             for (DraggableWidgetImageButton widget : this.buttonWidgets.get(item)) {
                 widget.setPosition(left + 84 - (i + 1) * (12 + 2), top + 2);
-                widget.render(guiGraphics, mouseX, mouseY, -1);
+                widget.extractRenderState(guiGraphics, mouseX, mouseY, -1);
                 i++;
             }
         }

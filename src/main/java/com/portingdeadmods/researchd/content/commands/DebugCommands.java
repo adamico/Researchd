@@ -46,7 +46,7 @@ public class DebugCommands {
                 .append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.YELLOW));
         player.sendSystemMessage(playerInfo);
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         ResearchTeam team = ResearchdApi.getTeamManager(level) == null
                 ? null
                 : ResearchdApi.getTeamManager(level).getTeamByPlayer(player);

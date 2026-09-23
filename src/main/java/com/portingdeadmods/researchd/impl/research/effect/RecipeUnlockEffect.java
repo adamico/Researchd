@@ -21,19 +21,19 @@ import java.util.Set;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
-public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name, Set<ResourceLocation> recipes)
+public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name, Set<Identifier> recipes)
         implements ResearchEffect {
     private static final MapCodec<RecipeUnlockEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     ItemStack.CODEC.optionalFieldOf("icon").forGetter(RecipeUnlockEffect::icon),
                     Codec.STRING.optionalFieldOf("name").forGetter(RecipeUnlockEffect::name),
-                    CodecUtils.set(ResourceLocation.CODEC).fieldOf("recipes").forGetter(RecipeUnlockEffect::recipes))
+                    CodecUtils.set(Identifier.CODEC).fieldOf("recipes").forGetter(RecipeUnlockEffect::recipes))
             .apply(instance, RecipeUnlockEffect::new));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, RecipeUnlockEffect> STREAM_CODEC = StreamCodec.composite(
@@ -41,19 +41,19 @@ public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name
             RecipeUnlockEffect::icon,
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
             RecipeUnlockEffect::name,
-            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.collection(HashSet::new)),
+            Identifier.STREAM_CODEC.apply(ByteBufCodecs.collection(HashSet::new)),
             RecipeUnlockEffect::recipes,
             RecipeUnlockEffect::new);
 
     public static final ResearchEffectSerializer<RecipeUnlockEffect> SERIALIZER =
             ResearchEffectSerializer.simple(CODEC, STREAM_CODEC);
-    public static final ResourceLocation ID = Researchd.rl("unlock_recipe");
+    public static final Identifier ID = Researchd.rl("unlock_recipe");
 
-    public RecipeUnlockEffect(ItemStack icon, String name, ResourceLocation... recipes) {
+    public RecipeUnlockEffect(ItemStack icon, String name, Identifier... recipes) {
         this(Optional.ofNullable(icon), Optional.ofNullable(name), Set.of(recipes));
     }
 
-    public RecipeUnlockEffect(ResourceLocation... recipes) {
+    public RecipeUnlockEffect(Identifier... recipes) {
         this(Optional.empty(), Optional.empty(), Set.of(recipes));
     }
 
@@ -82,7 +82,7 @@ public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name
     }
 
     @Override
-    public ResourceLocation id() {
+    public Identifier id() {
         return ID;
     }
 
@@ -93,8 +93,8 @@ public record RecipeUnlockEffect(Optional<ItemStack> icon, Optional<String> name
 
     public Set<RecipeHolder<?>> getRecipes(Level level) {
         Set<RecipeHolder<?>> recipes = new HashSet<>(this.recipes.size());
-        for (ResourceLocation recipe : this.recipes) {
-            Optional<RecipeHolder<?>> recipeHolder = level.getRecipeManager().byKey(recipe);
+        for (Identifier recipe : this.recipes) {
+            Optional<RecipeHolder<?>> recipeHolder = level.recipeAccess().byKey(recipe);
             recipeHolder.ifPresent(recipes::add);
         }
         return recipes;

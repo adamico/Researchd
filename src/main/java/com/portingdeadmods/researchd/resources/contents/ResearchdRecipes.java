@@ -5,7 +5,7 @@ import com.portingdeadmods.researchd.resources.JsonRecipeOutput;
 import java.util.Map;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 
@@ -61,7 +61,7 @@ public class ResearchdRecipes implements ResearchdRecipeProvider {
                 .save(this.output, Researchd.rl("end_pack"));
     }
 
-    public Map<ResourceLocation, Recipe<?>> getContents() {
+    public Map<Identifier, Recipe<?>> getContents() {
         return this.output.recipes();
     }
 }

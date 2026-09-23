@@ -36,7 +36,7 @@ public final class ResearchdTab {
                         Optional<HolderLookup.RegistryLookup<ResearchPack>> lookup =
                                 params.holders().lookup(ResearchdRegistries.RESEARCH_PACK_KEY);
                         Collection<ResourceKey<ResearchPack>> packs;
-                        if (!FMLEnvironment.dist.isClient()) {
+                        if (!FMLEnvironment.getDist().isClient()) {
                             MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();
                             if (currentServer != null) {
                                 packs = ((RegistryManagersGetter) currentServer

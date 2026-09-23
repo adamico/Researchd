@@ -20,18 +20,18 @@ import it.unimi.dsi.fastutil.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class ResearchMethodTypeSelectionPopupWidget extends PopupWidget {
-    public static final ResourceLocation BACKGROUND_SPRITE = Researchd.rl("widget/research_selector_widget");
+    public static final Identifier BACKGROUND_SPRITE = Researchd.rl("widget/research_selector_widget");
 
     private final EditBox searchBar;
     private final Search search;
@@ -109,7 +109,8 @@ public class ResearchMethodTypeSelectionPopupWidget extends PopupWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(BACKGROUND_SPRITE, this.getX(), this.getY(), 148, 160);
 
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
@@ -245,7 +246,7 @@ public class ResearchMethodTypeSelectionPopupWidget extends PopupWidget {
 
         @Override
         protected void internalRenderItem(
-                GuiGraphics guiGraphics,
+                GuiGraphicsExtractor guiGraphics,
                 ResearchMethodType item,
                 int xIndex,
                 int yIndex,

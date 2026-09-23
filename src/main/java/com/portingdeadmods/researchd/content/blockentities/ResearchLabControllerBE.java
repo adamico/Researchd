@@ -24,8 +24,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -128,7 +128,7 @@ public class ResearchLabControllerBE extends GhostMultiblockControllerBE impleme
             Researchd.error(
                     "Research Lab",
                     "Research pack %s stored at %s no longer has a slot, dropping it",
-                    packKey != null ? packKey.location() : "<unknown>",
+                    packKey != null ? packKey.identifier() : "<unknown>",
                     this.getBlockPos().toShortString());
             this.orphanedStacks.add(stack); // Dropped on the next tick, the chunk is still loading here
         }
@@ -228,7 +228,7 @@ public class ResearchLabControllerBE extends GhostMultiblockControllerBE impleme
     protected void saveData(CompoundTag tag, HolderLookup.Provider registries) {
         CompoundTag researchPackUsageTag = new CompoundTag();
         for (Map.Entry<ResourceKey<ResearchPack>, Float> entry : researchPackUsage.entrySet()) {
-            researchPackUsageTag.putFloat(entry.getKey().location().toString(), entry.getValue());
+            researchPackUsageTag.putFloat(entry.getKey().identifier().toString(), entry.getValue());
         }
         tag.put("research_pack_usage", researchPackUsageTag);
         super.saveData(tag, registries);
@@ -237,9 +237,9 @@ public class ResearchLabControllerBE extends GhostMultiblockControllerBE impleme
     @Override
     protected void loadData(CompoundTag tag, HolderLookup.Provider registries) {
         CompoundTag researchPackUsageTag = tag.getCompound("research_pack_usage");
-        for (String key : researchPackUsageTag.getAllKeys()) {
+        for (String key : researchPackUsageTag.keySet()) {
             this.researchPackUsage.put(
-                    ResourceKey.create(ResearchdRegistries.RESEARCH_PACK_KEY, ResourceLocation.parse(key)),
+                    ResourceKey.create(ResearchdRegistries.RESEARCH_PACK_KEY, Identifier.parse(key)),
                     researchPackUsageTag.getFloat(key));
         }
         super.loadData(tag, registries);

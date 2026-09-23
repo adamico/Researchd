@@ -9,19 +9,19 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.Nullable;
 
 public class RegistryVerifyEditBox extends BackgroundEditBox {
     private final @Nullable Registry<?> registry;
-    private final @Nullable Collection<ResourceLocation> ids;
+    private final @Nullable Collection<Identifier> ids;
 
     public RegistryVerifyEditBox(
             Font font,
             WidgetSprites sprites,
             @Nullable Registry<?> registry,
-            @Nullable Collection<ResourceLocation> ids,
+            @Nullable Collection<Identifier> ids,
             int width,
             int height,
             Component message) {
@@ -41,7 +41,7 @@ public class RegistryVerifyEditBox extends BackgroundEditBox {
                 GuiUtils.getFont(), BackgroundEditBox.SPRITES, registry, null, width, height, CommonComponents.EMPTY);
     }
 
-    public static RegistryVerifyEditBox forIds(Collection<ResourceLocation> ids, int width, int height) {
+    public static RegistryVerifyEditBox forIds(Collection<Identifier> ids, int width, int height) {
         Objects.requireNonNull(ids);
         return new RegistryVerifyEditBox(
                 GuiUtils.getFont(), BackgroundEditBox.SPRITES, null, ids, width, height, CommonComponents.EMPTY);
@@ -51,22 +51,22 @@ public class RegistryVerifyEditBox extends BackgroundEditBox {
         return registry;
     }
 
-    public @Nullable Collection<ResourceLocation> getIds() {
+    public @Nullable Collection<Identifier> getIds() {
         return ids;
     }
 
     @Override
     public void onValueChangedExtra(String newText) {
-        ResourceLocation id = ResourceLocation.parse(newText);
+        Identifier id = Identifier.parse(newText);
         if (!this.isValid(id)) {
-            this.setTextColor(FastColor.ARGB32.color(211, 47, 47));
+            this.setTextColor(ARGB.color(211, 47, 47));
         } else {
             this.setTextColor(14737632);
         }
     }
 
-    public ResourceLocation createId() {
-        return ResourceLocation.parse(this.getValue());
+    public Identifier createId() {
+        return Identifier.parse(this.getValue());
     }
 
     public <T> T getObjectById() {
@@ -77,10 +77,10 @@ public class RegistryVerifyEditBox extends BackgroundEditBox {
     }
 
     public boolean isValid() {
-        return this.isValid(ResourceLocation.parse(this.getValue()));
+        return this.isValid(Identifier.parse(this.getValue()));
     }
 
-    public boolean isValid(ResourceLocation id) {
+    public boolean isValid(Identifier id) {
         if (this.registry != null) return this.registry.containsKey(id);
         else if (this.ids != null) return this.ids.contains(id);
         return false;

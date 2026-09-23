@@ -15,18 +15,18 @@ import com.portingdeadmods.researchd.utils.TextUtils;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 public class CreatePackPopupWidget extends PopupWidget {
-    public static final ResourceLocation SPRITE = Researchd.rl("widget/pack_creation_popup");
+    public static final Identifier SPRITE = Researchd.rl("widget/pack_creation_popup");
 
     private final WidgetHeaderAndFooterLayout layout;
     private final ResearchScreen screen;
@@ -93,7 +93,7 @@ public class CreatePackPopupWidget extends PopupWidget {
         boolean generateExamples = this.checkbox.selected();
 
         if (this.packType == PackType.SERVER_DATA) {
-            PacketDistributor.sendToServer(
+            ClientPacketDistributor.sendToServer(
                     new CreateDatapackPayload(name, description, TextUtils.camelToSnake(name), generateExamples));
         } else if (this.packType == PackType.CLIENT_RESOURCES) {
             String namespace = TextUtils.trimSpecialCharacterAndConvertToSnake(name);
@@ -103,7 +103,7 @@ public class CreatePackPopupWidget extends PopupWidget {
             Result<Path, Exception> resourcePack =
                     writer.write(Minecraft.getInstance().getResourcePackDirectory(), name, description, namespace);
             if (resourcePack instanceof Result.Ok(Path value)) {
-                PacketDistributor.sendToServer(
+                ClientPacketDistributor.sendToServer(
                         new SetPackPayload(new PackLocation(value, namespace, PackType.CLIENT_RESOURCES)));
             }
         }
@@ -117,7 +117,8 @@ public class CreatePackPopupWidget extends PopupWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.blitSprite(SPRITE, this.getX(), this.getY(), this.width, this.height);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -42,7 +42,8 @@ public abstract class PopupWidget extends AbstractContainerWidget implements Lay
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (this.updateHovered) {
             this.hovered = this.isRectHovered(guiGraphics, mouseX, mouseY, this.getWidth(), 12);
         }
@@ -50,7 +51,7 @@ public abstract class PopupWidget extends AbstractContainerWidget implements Lay
         LayoutWidget.super.renderElements(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    public void renderTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+    public void renderTooltips(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
@@ -146,7 +147,7 @@ public abstract class PopupWidget extends AbstractContainerWidget implements Lay
         return this.hovered;
     }
 
-    protected boolean isRectHovered(GuiGraphics guiGraphics, int mouseX, int mouseY, int width, int height) {
+    protected boolean isRectHovered(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, int width, int height) {
         return guiGraphics.containsPointInScissor(mouseX, mouseY)
                 && mouseX >= this.getX()
                 && mouseY >= this.getY()

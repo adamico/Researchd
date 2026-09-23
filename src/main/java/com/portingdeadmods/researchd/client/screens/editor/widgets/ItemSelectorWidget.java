@@ -18,13 +18,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +33,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemSelectorWidget extends AbstractWidget {
-    public static final ResourceLocation EDIT_ELEMENT_HOVER_SPRITE = Researchd.rl("edit_element_hover");
+    public static final Identifier EDIT_ELEMENT_HOVER_SPRITE = Researchd.rl("edit_element_hover");
 
     @Nullable private final PopupWidget parentPopupWidget;
 
@@ -76,7 +76,8 @@ public class ItemSelectorWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(
                 EditorSharedSprites.EDITOR_BACKGROUND_INVERTED_SPRITE,
                 this.getX(),
@@ -84,9 +85,9 @@ public class ItemSelectorWidget extends AbstractWidget {
                 this.getWidth(),
                 this.getHeight());
 
-        if (this.selected != null && this.selected.getItems().length > 0) {
+        if (this.selected != null && this.selected.items().length > 0) {
             guiGraphics.renderItem(
-                    this.selected.getItems()[0],
+                    this.selected.items()[0],
                     this.getX() + (this.getWidth() - 16) / 2,
                     this.getY() + (this.getWidth() - 16) / 2);
         }
@@ -141,7 +142,7 @@ public class ItemSelectorWidget extends AbstractWidget {
     }
 
     public ItemResearchIcon createIcon() {
-        return new ItemResearchIcon(Arrays.asList(this.getSelected().getItems()));
+        return new ItemResearchIcon(Arrays.asList(this.getSelected().items()));
     }
 
     public void setResponder(Consumer<Ingredient> responder) {

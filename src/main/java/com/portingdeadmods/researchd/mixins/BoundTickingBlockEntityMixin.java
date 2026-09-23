@@ -24,7 +24,7 @@ public abstract class BoundTickingBlockEntityMixin {
     @WrapMethod(method = "tick")
     private void researchd$pushOwnerContext(Operation<Void> original) {
         Level level = this.blockEntity.getLevel();
-        UUID teamId = (level == null || level.isClientSide)
+        UUID teamId = (level == null || level.isClientSide())
                 ? null
                 : ResearchdApi.getOrMigratePlacedByTeam(this.blockEntity, level);
 

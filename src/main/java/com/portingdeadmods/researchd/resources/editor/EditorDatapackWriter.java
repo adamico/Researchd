@@ -9,12 +9,12 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.Unit;
 
 public class EditorDatapackWriter implements PackWriter {
-    private final Map<ResourceLocation, ResearchdDatagenProvider<?>> providers;
+    private final Map<Identifier, ResearchdDatagenProvider<?>> providers;
 
     public EditorDatapackWriter() {
         this.providers = new HashMap<>();

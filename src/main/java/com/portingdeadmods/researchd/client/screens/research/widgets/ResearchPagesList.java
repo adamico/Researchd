@@ -10,22 +10,22 @@ import com.portingdeadmods.researchd.client.screens.research.ResearchScreen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 /**
  *
  */
 public class ResearchPagesList extends AbstractWidget {
-    public static final ResourceLocation PAGE_BUTTON_ACTIVE =
+    public static final Identifier PAGE_BUTTON_ACTIVE =
             Researchd.rl("textures/gui/research_screen/research_page_button_active.png");
-    public static final ResourceLocation PAGE_BUTTON_INACTIVE =
+    public static final Identifier PAGE_BUTTON_INACTIVE =
             Researchd.rl("textures/gui/research_screen/research_page_button_inactive.png");
-    public static final ResourceLocation PAGE_BUTTON_INACTIVE_HOVER =
+    public static final Identifier PAGE_BUTTON_INACTIVE_HOVER =
             Researchd.rl("textures/gui/research_screen/research_page_button_inactive_hover.png");
 
     private static final int BUTTON_SIZE = 10;
@@ -43,7 +43,7 @@ public class ResearchPagesList extends AbstractWidget {
     }
 
     public void refreshPages() {
-        ResourceLocation previousId = this.selectedPage != null ? this.selectedPage.id() : null;
+        Identifier previousId = this.selectedPage != null ? this.selectedPage.id() : null;
 
         this.pages.clear();
         this.selectedPage = null;
@@ -51,7 +51,7 @@ public class ResearchPagesList extends AbstractWidget {
         ResearchManager researchManager = ResearchdApi.getResearchManager();
         if (researchManager == null) return;
 
-        for (ResourceLocation pageId : researchManager.getPageIds()) {
+        for (Identifier pageId : researchManager.getPageIds()) {
             ResearchPage page = researchManager.getPageForId(pageId);
             if (page != null) this.pages.add(page);
         }
@@ -63,7 +63,7 @@ public class ResearchPagesList extends AbstractWidget {
         if (this.selectedPage == null) this.selectedPage = this.pages.getFirst();
     }
 
-    private @Nullable ResearchPage findPage(@Nullable ResourceLocation pageId) {
+    private @Nullable ResearchPage findPage(@Nullable Identifier pageId) {
         if (pageId == null) return null;
 
         for (ResearchPage page : this.pages) {
@@ -73,7 +73,8 @@ public class ResearchPagesList extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         int buttonY = getY();
 
         for (int i = 0; i < this.pages.size(); i++) {
@@ -95,7 +96,7 @@ public class ResearchPagesList extends AbstractWidget {
 
             if (page.iconResearchKey() != null) {
                 ClientResearchIcon<?> clientIcon =
-                        ResearchScreen.CLIENT_ICONS.get(page.iconResearchKey().location());
+                        ResearchScreen.CLIENT_ICONS.get(page.iconResearchKey().identifier());
                 if (clientIcon != null) {
                     clientIcon.render(guiGraphics, getX(), buttonY, mouseX, mouseY, 0.48f, partialTick);
                 }

@@ -18,14 +18,14 @@ import com.portingdeadmods.researchd.impl.ResearchProgress;
 import com.portingdeadmods.researchd.utils.researches.ResearchHelperClient;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMenu> {
-    public static final ResourceLocation BACKGROUND_TEXTURE = Researchd.rl("textures/gui/research_lab.png");
-    public static final ResourceLocation RESEARCH_PACK_TEXTURE = Researchd.rl("textures/item/research_pack_empty.png");
-    public static final ResourceLocation SLOT_SPRITE = Researchd.rl("slot_with_progress");
-    public static final int PROGRESS_COLOR = FastColor.ARGB32.color(0, 225, 100);
+    public static final Identifier BACKGROUND_TEXTURE = Researchd.rl("textures/gui/research_lab.png");
+    public static final Identifier RESEARCH_PACK_TEXTURE = Researchd.rl("textures/item/research_pack_empty.png");
+    public static final Identifier SLOT_SPRITE = Researchd.rl("slot_with_progress");
+    public static final int PROGRESS_COLOR = ARGB.color(0, 225, 100);
     public static final int PROGRESS_BAR_WIDTH = 105;
     public static final int SLOT_WIDTH = 18;
     public static final int SLOT_HEIGHT = 20;
@@ -102,28 +102,28 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
     }
 
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        renderBackground(pGuiGraphics, pMouseX, pMouseX, pPartialTick);
+    public void extractRenderState(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        extractBackground(pGuiGraphics, pMouseX, pMouseX, pPartialTick);
         NeoForge.EVENT_BUS.post(new ContainerScreenEvent.Render.Background(this, pGuiGraphics, pMouseX, pMouseY));
 
         for (Renderable renderable : this.renderables) {
-            renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+            renderable.extractRenderState(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         }
 
         renderItemsAndSlots(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-        this.scroller.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        this.scroller.extractWidgetRenderState(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         // Foreground
         //        this.drawBars(pGuiGraphics);
 
         renderTooltip(pGuiGraphics, pMouseX, pMouseY);
     }
 
-    public boolean isHovering(GuiGraphics guiGraphics, Slot slot, double mouseX, double mouseY) {
+    public boolean isHovering(GuiGraphicsExtractor guiGraphics, Slot slot, double mouseX, double mouseY) {
         return guiGraphics.containsPointInScissor((int) mouseX, (int) mouseY) && this.isHovering(slot, mouseX, mouseY);
     }
 
-    private void renderItemsAndSlots(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    private void renderItemsAndSlots(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         RenderSystem.disableDepthTest();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate((float) this.leftPos, (float) this.topPos, 0.0F);
@@ -185,17 +185,17 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
     }
 
     @Override
-    public void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         super.renderLabels(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    public @NotNull ResourceLocation getBackgroundTexture() {
+    public @NotNull Identifier getBackgroundTexture() {
         return BACKGROUND_TEXTURE;
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
         //
         //        this.botPos = this.topPos + getYSize();
@@ -249,7 +249,7 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 60f / 255f);
                 {
-                    guiGraphics.renderFakeItem(
+                    guiGraphics.fakeItem(
                             this.menu.getResearchPackItems().get(i),
                             startX + i * SLOT_WIDTH + 1 - this.scroller.getScrollOffset(),
                             startY + 1);
@@ -274,7 +274,7 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
                 pose.pushPose();
                 {
                     pose.translate(0, 0, RdZIndex.LAB_RESEARCH_TOOLTIP);
-                    guiGraphics.renderTooltip(
+                    guiGraphics.setTooltipForNextFrame(
                             Minecraft.getInstance().font,
                             Component.literal("Open Research in Research Screen"),
                             mouseX,
@@ -291,7 +291,7 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
         int width = (int) (progress * PROGRESS_BAR_WIDTH);
         guiGraphics.fill(x, y, x + width, y + 6, PROGRESS_COLOR);
 
-        guiGraphics.drawCenteredString(
+        guiGraphics.centeredText(
                 Minecraft.getInstance().font,
                 String.valueOf((int) (progress * 100)) + '%',
                 x + 1 + PROGRESS_BAR_WIDTH / 2,
@@ -303,7 +303,7 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
         return SLOT_WIDTH * ResearchHelperClient.getResearchPacks().size();
     }
 
-    private void drawSlot(GuiGraphics guiGraphics, int x, int y) {}
+    private void drawSlot(GuiGraphicsExtractor guiGraphics, int x, int y) {}
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -331,7 +331,7 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
         }
     }
 
-    private void drawPackSlot(GuiGraphics guiGraphics, int x, int y) {
+    private void drawPackSlot(GuiGraphicsExtractor guiGraphics, int x, int y) {
         GuiUtils.ShaderChain.create()
                 .grayscale()
                 .drawTo(

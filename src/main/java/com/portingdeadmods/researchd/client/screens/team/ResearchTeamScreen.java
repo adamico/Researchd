@@ -15,7 +15,7 @@ import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperServer;
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.StringWidget;
@@ -24,11 +24,11 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 
 public class ResearchTeamScreen extends BaseTeamScreen {
-    public static final ResourceLocation SCREEN_TEXTURE = Researchd.rl("textures/gui/team_screen.png");
+    public static final Identifier SCREEN_TEXTURE = Researchd.rl("textures/gui/team_screen.png");
     public static final WidgetSprites TEAM_MEMBER_BUTTON_SPRITES =
             new WidgetSprites(Researchd.rl("team_member"), Researchd.rl("team_member_focused"));
     public static final WidgetSprites SETTINGS_BUTTON_SPRITES = new WidgetSprites(
@@ -105,7 +105,7 @@ public class ResearchTeamScreen extends BaseTeamScreen {
             }
         });
         this.teamNameEdit.setValue(name);
-        this.teamNameEdit.setTextColor(FastColor.ARGB32.color(255, 140, 140, 140));
+        this.teamNameEdit.setTextColor(ARGB.color(255, 140, 140, 140));
         this.teamNameEdit.setMaxLength(32);
         this.teamNameEdit.setTextShadow(false);
         this.teamNameEdit.setBordered(false);
@@ -221,7 +221,7 @@ public class ResearchTeamScreen extends BaseTeamScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.blit(
@@ -239,7 +239,7 @@ public class ResearchTeamScreen extends BaseTeamScreen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         updateHeaderButtonsActive();
     }

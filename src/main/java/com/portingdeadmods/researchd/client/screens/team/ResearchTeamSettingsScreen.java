@@ -11,7 +11,7 @@ import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperServer;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
@@ -19,11 +19,11 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class ResearchTeamSettingsScreen extends BaseTeamScreen {
-    public static final ResourceLocation SCREEN_TEXTURE = Researchd.rl("textures/gui/team_settings_screen.png");
+    public static final Identifier SCREEN_TEXTURE = Researchd.rl("textures/gui/team_settings_screen.png");
     private LinearLayout layout;
     private final Screen prevScreen;
     private String tempTeamName;
@@ -98,7 +98,7 @@ public class ResearchTeamSettingsScreen extends BaseTeamScreen {
                 .build();
         this.leaveButton = Button.builder(
                         ResearchdTranslations.component(ResearchdTranslations.Team.BUTTON_LEAVE_TEAM), btn -> {
-                            PacketDistributor.sendToServer(new LeaveTeamPayload(PlayerUtils.EmptyUUID));
+                            ClientPacketDistributor.sendToServer(new LeaveTeamPayload(PlayerUtils.EmptyUUID));
                         })
                 .size(112, 16)
                 .build();
@@ -185,7 +185,7 @@ public class ResearchTeamSettingsScreen extends BaseTeamScreen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.manageMembersButton.active = (ResearchTeamHelperClient.getRole().getPermissionLevel() > 0);
         this.transferOwnershipButton.active = (ResearchTeamHelperClient.getRole() == ResearchTeamRole.OWNER);
@@ -193,7 +193,7 @@ public class ResearchTeamSettingsScreen extends BaseTeamScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.blit(

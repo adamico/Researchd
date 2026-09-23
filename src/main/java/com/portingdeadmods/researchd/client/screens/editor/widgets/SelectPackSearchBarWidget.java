@@ -7,7 +7,7 @@ import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PDLButton;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PDLImageButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -15,12 +15,12 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 
 public class SelectPackSearchBarWidget extends AbstractWidget {
-    public static final ResourceLocation SEARCH_BAR_SPRITE = Researchd.rl("editor_search_bar");
+    public static final Identifier SEARCH_BAR_SPRITE = Researchd.rl("editor_search_bar");
     public static final WidgetSprites CREATE_PACK_SPRITES =
             new WidgetSprites(Researchd.rl("editor_create_pack"), Researchd.rl("editor_create_pack_highlighted"));
     public static final WidgetSprites SELECT_PACK_SPRITES =
@@ -76,11 +76,12 @@ public class SelectPackSearchBarWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(SEARCH_BAR_SPRITE, this.getX(), this.getY(), 156, 16);
 
-        this.createPackButton.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.selectPackDirectoryButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.createPackButton.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+        this.selectPackDirectoryButton.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.drawScrollingString(
                 Minecraft.getInstance().font,
@@ -88,12 +89,12 @@ public class SelectPackSearchBarWidget extends AbstractWidget {
                 this.getX() + 2,
                 this.getX() + 156 - 32 - 1,
                 this.getY() + 2 + (14 - Minecraft.getInstance().font.lineHeight) / 2,
-                FastColor.ARGB32.color(255, 255, 255));
+                ARGB.color(255, 255, 255));
 
         if (!(this.createPackButton.isHovered() || this.selectPackDirectoryButton.isHovered())
                 && this.selectedPack != null
                 && this.isHovered()) {
-            guiGraphics.renderTooltip(
+            guiGraphics.setTooltipForNextFrame(
                     Minecraft.getInstance().font,
                     Component.literal(this.selectedPack.rootPath().toString()),
                     mouseX,

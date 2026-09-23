@@ -17,8 +17,8 @@ import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.*;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -69,7 +69,7 @@ public class DevCommands {
 
     private static int dumpCurrentDimension(CommandContext<CommandSourceStack> ctx) {
         Level level = ctx.getSource().getLevel();
-        String dimensionId = level.dimension().location().toString();
+        String dimensionId = level.dimension().identifier().toString();
         ctx.getSource()
                 .sendSystemMessage(Component.literal("Current Dimension: ")
                         .append(Component.literal(dimensionId).withStyle(ChatFormatting.GREEN))
@@ -82,7 +82,7 @@ public class DevCommands {
     }
 
     private static int dumpAllDimensions(CommandContext<CommandSourceStack> ctx) {
-        List<ResourceLocation> levels =
+        List<Identifier> levels =
                 ctx.getSource().levels().stream().map(ResourceKey::location).toList();
         ctx.getSource()
                 .sendSystemMessage(Component.literal("Found ")
@@ -93,7 +93,7 @@ public class DevCommands {
                                 .withHoverEvent(new HoverEvent(
                                         net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT,
                                         Component.literal("Click to copy all dimension IDs")))));
-        for (ResourceLocation dimensionId : levels) {
+        for (Identifier dimensionId : levels) {
             ctx.getSource()
                     .sendSystemMessage(Component.literal("- " + dimensionId)
                             .withStyle(ChatFormatting.GRAY)
@@ -119,7 +119,7 @@ public class DevCommands {
             return 0;
         }
 
-        RecipeManager recipeManager = source.getLevel().getRecipeManager();
+        RecipeManager recipeManager = source.getLevel().recipeAccess();
         List<RecipeHolder<?>> matchingRecipes = findRecipes(recipeManager, item, mode, source);
 
         if (matchingRecipes.isEmpty()) {
@@ -208,7 +208,7 @@ public class DevCommands {
         builder.append("List.of(\n");
 
         for (RecipeHolder<?> recipeHolder : matchingRecipes) {
-            builder.append("new RecipeUnlockEffect(ResourceLocation.parse(");
+            builder.append("new RecipeUnlockEffect(Identifier.parse(");
             String recipeId = recipeHolder.id().toString();
             builder.append('"').append(recipeId).append('"');
             builder.append(matchingRecipes.indexOf(recipeHolder) == matchingRecipes.size() - 1 ? "))\n" : ")),\n");

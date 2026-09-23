@@ -12,15 +12,15 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PlayerManagementDraggableWidget extends AbstractDraggableWidget {
-    public static final ResourceLocation WINDOW_TEXTURE = Researchd.rl("textures/gui/player_management_window.png");
+    public static final Identifier WINDOW_TEXTURE = Researchd.rl("textures/gui/player_management_window.png");
     private final PlayerManagementButtons buttonSettings;
     private final List<DraggableWidgetImageButton> buttonWidgets;
     private final PlayerManagementList managementList;
@@ -138,7 +138,7 @@ public class PlayerManagementDraggableWidget extends AbstractDraggableWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         super.renderWidget(guiGraphics, mouseX, mouseY, v);
 
         this.popupWidget.setPosition(
@@ -154,7 +154,7 @@ public class PlayerManagementDraggableWidget extends AbstractDraggableWidget {
         }
         poseStack.popPose();
 
-        this.managementList.render(guiGraphics, mouseX, mouseY, v);
+        this.managementList.extractRenderState(guiGraphics, mouseX, mouseY, v);
     }
 
     private void onOkPress(Button btn) {

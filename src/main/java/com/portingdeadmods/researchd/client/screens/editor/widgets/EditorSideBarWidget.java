@@ -6,16 +6,16 @@ import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.AbstractLayoutWidget;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PDLImageButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class EditorSideBarWidget extends AbstractLayoutWidget<LinearLayout> {
-    public static final ResourceLocation EDITOR_SIDE_BAR_TEXTURE =
+    public static final Identifier EDITOR_SIDE_BAR_TEXTURE =
             Researchd.rl("textures/gui/research_screen/editor_expandable.png");
     public static final WidgetSprites SETTINGS_BUTTON =
             new WidgetSprites(Researchd.rl("editor_open_settings"), Researchd.rl("editor_open_settings_highlighted"));
@@ -41,7 +41,8 @@ public class EditorSideBarWidget extends AbstractLayoutWidget<LinearLayout> {
     private void onSettingsButtonPressed(PDLImageButton button) {}
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         PoseStack poseStack = guiGraphics.pose();
         poseStack.pushPose();
         {

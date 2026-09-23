@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.portingdeadmods.researchd.Researchd;
 import java.util.OptionalDouble;
 import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
 public final class ResearchdRenderTypes {
     public static final RenderType LINES_NONTRANSLUCENT = createDefault(

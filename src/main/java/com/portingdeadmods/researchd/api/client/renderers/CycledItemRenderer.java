@@ -3,7 +3,7 @@ package com.portingdeadmods.researchd.api.client.renderers;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -34,7 +34,7 @@ public class CycledItemRenderer {
 
     public void setItems(Ingredient ingredient) {
         this.items.clear();
-        for (ItemStack item : ingredient.getItems()) {
+        for (ItemStack item : ingredient.items()) {
             this.items.add(item.copyWithCount(this.count));
         }
     }
@@ -47,10 +47,10 @@ public class CycledItemRenderer {
         this.items = items;
     }
 
-    public void render(GuiGraphics guiGraphics, int x, int y) {
+    public void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
         if (!this.items.isEmpty()) {
-            guiGraphics.renderFakeItem(getItem(), x, y);
-            guiGraphics.renderItemDecorations(Minecraft.getInstance().font, getItem(), x, y);
+            guiGraphics.fakeItem(getItem(), x, y);
+            guiGraphics.itemDecorations(Minecraft.getInstance().font, getItem(), x, y);
         }
     }
 

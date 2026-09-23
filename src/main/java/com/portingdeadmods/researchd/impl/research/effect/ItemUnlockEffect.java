@@ -22,8 +22,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,12 +33,12 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
-public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, ResourceLocation item)
+public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, Identifier item)
         implements ResearchEffect {
     private static final MapCodec<ItemUnlockEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     ItemStack.CODEC.optionalFieldOf("icon").forGetter(ItemUnlockEffect::icon),
                     Codec.STRING.optionalFieldOf("name").forGetter(ItemUnlockEffect::name),
-                    ResourceLocation.CODEC.fieldOf("item").forGetter(ItemUnlockEffect::item))
+                    Identifier.CODEC.fieldOf("item").forGetter(ItemUnlockEffect::item))
             .apply(instance, ItemUnlockEffect::new));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, ItemUnlockEffect> STREAM_CODEC = StreamCodec.composite(
@@ -46,19 +46,19 @@ public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, 
             ItemUnlockEffect::icon,
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
             ItemUnlockEffect::name,
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             ItemUnlockEffect::item,
             ItemUnlockEffect::new);
 
     public static final ResearchEffectSerializer<ItemUnlockEffect> SERIALIZER =
             ResearchEffectSerializer.simple(CODEC, STREAM_CODEC);
-    public static final ResourceLocation ID = Researchd.rl("unlock_item");
+    public static final Identifier ID = Researchd.rl("unlock_item");
 
-    public ItemUnlockEffect(ItemStack icon, String name, ResourceLocation item) {
+    public ItemUnlockEffect(ItemStack icon, String name, Identifier item) {
         this(Optional.ofNullable(icon), Optional.ofNullable(name), item);
     }
 
-    public ItemUnlockEffect(ResourceLocation item) {
+    public ItemUnlockEffect(Identifier item) {
         this(Optional.empty(), Optional.empty(), item);
     }
 
@@ -89,7 +89,7 @@ public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, 
     }
 
     @Override
-    public ResourceLocation id() {
+    public Identifier id() {
         return ID;
     }
 
@@ -113,7 +113,7 @@ public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, 
         }
 
         Set<RecipeHolder<?>> recipes = new HashSet<>();
-        for (RecipeHolder<?> holder : level.getRecipeManager().getRecipes()) {
+        for (RecipeHolder<?> holder : level.recipeAccess().getRecipes()) {
             Recipe<?> recipe = holder.value();
             ItemStack resultStack = recipe.getResultItem(level.registryAccess());
             boolean matchesResult = resultStack.is(target);
@@ -130,7 +130,7 @@ public record ItemUnlockEffect(Optional<ItemStack> icon, Optional<String> name, 
         if (ingredient.isEmpty()) {
             return false;
         }
-        for (ItemStack stack : ingredient.getItems()) {
+        for (ItemStack stack : ingredient.items()) {
             if (stack.is(target)) {
                 return true;
             }

@@ -2,7 +2,7 @@ package com.portingdeadmods.researchd.client.screens.lib.widgets;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import javax.annotation.Nullable;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -57,7 +57,8 @@ public class ScrollableWidget<L extends Layout> extends AbstractLayoutWidget<L> 
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.enableScissor(
                 this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight());
         {

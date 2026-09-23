@@ -5,12 +5,12 @@ import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.api.client.ClientResearchIcon;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget;
 import com.portingdeadmods.researchd.impl.research.icons.SpriteResearchIcon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public record ClientSpriteResearchIcon(SpriteResearchIcon icon) implements ClientResearchIcon<SpriteResearchIcon> {
     @Override
     public void render(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             int panelLeft,
             int panelTop,
             int mouseX,

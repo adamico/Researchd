@@ -50,9 +50,9 @@ import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -65,21 +65,19 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(value = Researchd.MODID, dist = Dist.CLIENT)
 public final class ResearchdClient {
-    public static final Map<ResourceLocation, WidgetConstructor<? extends ResearchMethod>> RESEARCH_METHOD_WIDGETS =
+    public static final Map<Identifier, WidgetConstructor<? extends ResearchMethod>> RESEARCH_METHOD_WIDGETS =
             new HashMap<>();
-    public static final Map<ResourceLocation, WidgetConstructor<? extends ResearchEffect>> RESEARCH_EFFECT_WIDGETS =
+    public static final Map<Identifier, WidgetConstructor<? extends ResearchEffect>> RESEARCH_EFFECT_WIDGETS =
             new HashMap<>();
-    public static final Map<ResourceLocation, Function<ResearchIcon, ClientResearchIcon<?>>> RESEARCH_ICONS =
+    public static final Map<Identifier, Function<ResearchIcon, ClientResearchIcon<?>>> RESEARCH_ICONS = new HashMap<>();
+    public static final Map<Identifier, StandaloneEditorObject<? extends Research>> CLIENT_RESEARCHES = new HashMap<>();
+    public static final Map<Identifier, StandaloneEditorObject<? extends ResearchPack>> CLIENT_RESEARCH_PACKS =
             new HashMap<>();
-    public static final Map<ResourceLocation, StandaloneEditorObject<? extends Research>> CLIENT_RESEARCHES =
-            new HashMap<>();
-    public static final Map<ResourceLocation, StandaloneEditorObject<? extends ResearchPack>> CLIENT_RESEARCH_PACKS =
-            new HashMap<>();
-    public static final Map<ResourceLocation, TypedEditorObject<? extends ResearchMethod, ResearchMethodType>>
+    public static final Map<Identifier, TypedEditorObject<? extends ResearchMethod, ResearchMethodType>>
             CLIENT_RESEARCH_METHOD_TYPES = new HashMap<>();
     public static final ModelResourceLocation RESEARCH_LAB_MODEL =
             ModelResourceLocation.standalone(Researchd.rl("block/research_lab"));
-    public static final Map<ResourceLocation, TypedEditorObject<? extends ResearchEffect, ResearchEffectType>>
+    public static final Map<Identifier, TypedEditorObject<? extends ResearchEffect, ResearchEffectType>>
             CLIENT_RESEARCH_EFFECT_TYPES = new HashMap<>();
 
     public static int previewRendererResearchPackColor = -1;
@@ -171,21 +169,19 @@ public final class ResearchdClient {
     }
 
     private static <I extends ResearchIcon> void addClientResearchIcon(
-            ResourceLocation id, Function<I, ClientResearchIcon<?>> factory) {
+            Identifier id, Function<I, ClientResearchIcon<?>> factory) {
         RESEARCH_ICONS.put(id, (Function<ResearchIcon, ClientResearchIcon<?>>) factory);
     }
 
-    private static <T extends ResearchMethod> void addMethodWidget(
-            ResourceLocation id, WidgetConstructor<T> constructor) {
+    private static <T extends ResearchMethod> void addMethodWidget(Identifier id, WidgetConstructor<T> constructor) {
         RESEARCH_METHOD_WIDGETS.put(id, constructor);
     }
 
-    private static void addEffectWidgetUnsafe(ResourceLocation id, WidgetConstructor constructor) {
+    private static void addEffectWidgetUnsafe(Identifier id, WidgetConstructor constructor) {
         RESEARCH_EFFECT_WIDGETS.put(id, constructor);
     }
 
-    private static <T extends ResearchEffect> void addEffectWidget(
-            ResourceLocation id, WidgetConstructor<T> constructor) {
+    private static <T extends ResearchEffect> void addEffectWidget(Identifier id, WidgetConstructor<T> constructor) {
         RESEARCH_EFFECT_WIDGETS.put(id, constructor);
     }
 

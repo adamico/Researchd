@@ -6,12 +6,12 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import org.jetbrains.annotations.Nullable;
 
-public record JsonRecipeOutput(Map<ResourceLocation, Recipe<?>> recipes) implements RecipeOutput {
+public record JsonRecipeOutput(Map<Identifier, Recipe<?>> recipes) implements RecipeOutput {
     public JsonRecipeOutput() {
         this(new HashMap<>());
     }
@@ -23,7 +23,7 @@ public record JsonRecipeOutput(Map<ResourceLocation, Recipe<?>> recipes) impleme
 
     @Override
     public void accept(
-            ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+            Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
         this.recipes.put(id, recipe);
     }
 }

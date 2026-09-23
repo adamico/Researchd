@@ -12,7 +12,7 @@ import com.portingdeadmods.researchd.utils.GuiUtils;
 import com.portingdeadmods.researchd.utils.SpaghettiClient;
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,8 @@ public class ResearchMethodParentSelectionPopupWidget extends PopupWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(
                 EditorSharedSprites.EDITOR_WIDGET_BACKGROUND_SPRITE,
                 this.getX(),
@@ -109,7 +110,7 @@ public class ResearchMethodParentSelectionPopupWidget extends PopupWidget {
 
         @Override
         protected void internalRenderItem(
-                GuiGraphics guiGraphics,
+                GuiGraphicsExtractor guiGraphics,
                 ResearchMethodListType item,
                 int xIndex,
                 int yIndex,
@@ -124,7 +125,7 @@ public class ResearchMethodParentSelectionPopupWidget extends PopupWidget {
                     top,
                     this.getItemWidth(),
                     this.getItemHeight());
-            guiGraphics.drawCenteredString(
+            guiGraphics.centeredText(
                     GuiUtils.getFont(),
                     item.getName(),
                     left + this.getItemWidth() / 2,

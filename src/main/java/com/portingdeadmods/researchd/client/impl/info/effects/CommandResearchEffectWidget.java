@@ -11,19 +11,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.util.Size2i;
 
 public class CommandResearchEffectWidget extends AbstractResearchInfoWidget<CommandResearchEffect> {
     public static final Size2i SPRITE_SIZE = new Size2i(14, 14);
-    private static final ResourceLocation COMMAND_BLOCK_FRONT =
-            ResourceLocation.withDefaultNamespace("block/command_block_front");
+    private static final Identifier COMMAND_BLOCK_FRONT = Identifier.withDefaultNamespace("block/command_block_front");
 
     public CommandResearchEffectWidget(int x, int y, CommandResearchEffect effect) {
         super(x, y, effect);
@@ -35,7 +34,7 @@ public class CommandResearchEffectWidget extends AbstractResearchInfoWidget<Comm
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         guiGraphics.fill(
                 this.getX(),
                 this.getY(),
@@ -51,7 +50,7 @@ public class CommandResearchEffectWidget extends AbstractResearchInfoWidget<Comm
     }
 
     @Override
-    public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderTooltip(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.isHovered()) {
             List<Component> tooltip = new ArrayList<>();
             if (!this.value.onUnlockCommand().isBlank()) {

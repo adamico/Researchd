@@ -9,10 +9,10 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class GuiUtils {
-    public static boolean spriteExists(TextureAtlas atlas, ResourceLocation spriteId) {
+    public static boolean spriteExists(TextureAtlas atlas, Identifier spriteId) {
         TextureAtlasSprite sprite = atlas.getSprite(spriteId);
         return sprite != atlas.getSprite(MissingTextureAtlasSprite.getLocation());
     }

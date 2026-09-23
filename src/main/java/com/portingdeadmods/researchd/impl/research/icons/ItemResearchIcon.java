@@ -5,7 +5,7 @@ import com.portingdeadmods.researchd.api.research.ResearchIcon;
 import com.portingdeadmods.researchd.api.research.serializers.ResearchIconSerializer;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
@@ -15,11 +15,11 @@ public record ItemResearchIcon(List<ItemStack> items) implements ResearchIcon {
                     .listOf()
                     .xmap(ItemResearchIcon::new, ItemResearchIcon::items)
                     .fieldOf("items"));
-    public static final ResourceLocation ID = Researchd.rl("item_research_icon");
+    public static final Identifier ID = Researchd.rl("item_research_icon");
     public static final ItemResearchIcon EMPTY = new ItemResearchIcon(Collections.emptyList());
 
     @Override
-    public ResourceLocation id() {
+    public Identifier id() {
         return ID;
     }
 

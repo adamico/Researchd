@@ -11,16 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.common.util.Size2i;
 
 public class RecipeUnlockEffectWidget extends AbstractResearchInfoWidget<RecipeUnlockEffect> {
-    public static final ResourceLocation RECIPE_ICON_SPRITE = Researchd.rl("recipe_icon");
+    public static final Identifier RECIPE_ICON_SPRITE = Researchd.rl("recipe_icon");
     public final Integer textWidth;
     public final List<RecipeHolder<?>> recipes;
     private final CycledItemRenderer itemRenderer;
@@ -67,24 +67,23 @@ public class RecipeUnlockEffectWidget extends AbstractResearchInfoWidget<RecipeU
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         if (this.hasRecipes()) {
-            guiGraphics.fill(
-                    this.getX(), this.getY(), this.getX() + 16, this.getY() + 16, FastColor.ARGB32.color(69, 69, 69));
+            guiGraphics.fill(this.getX(), this.getY(), this.getX() + 16, this.getY() + 16, ARGB.color(69, 69, 69));
             if (this.icon != null) {
-                guiGraphics.renderItem(this.icon, this.getX(), this.getY());
+                guiGraphics.item(this.icon, this.getX(), this.getY());
             } else {
                 this.itemRenderer.render(guiGraphics, this.getX(), this.getY());
                 this.itemRenderer.tick(v);
             }
             guiGraphics.blitSprite(RECIPE_ICON_SPRITE, this.getX() + 7, this.getY() + 6, 200, 16, 16);
         } else {
-            guiGraphics.drawString(font, "MISSING RECIPE", this.getX() + 2, this.getY() + 4, 0xFF5555, true);
+            guiGraphics.text(font, "MISSING RECIPE", this.getX() + 2, this.getY() + 4, 0xFF5555, true);
         }
     }
 
     @Override
-    public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderTooltip(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.isHovered()) {
             MutableComponent component = ResearchdTranslations.component(
                     ResearchdTranslations.Research.RECIPE_UNLOCK_EFFECT_TOOLTIP,

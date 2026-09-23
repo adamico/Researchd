@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public final class EnUsLangProvider extends LanguageProvider {
@@ -58,44 +58,44 @@ public final class EnUsLangProvider extends LanguageProvider {
     }
 
     private <T> void addRegistryObject(Registry<T> registry, T value, String name) {
-        ResourceLocation objLoc = registry.getKey(value);
+        Identifier objLoc = registry.getKey(value);
         String registryPath = registry.key().location().getPath();
         this.add(registryPath + "." + objLoc.getNamespace() + "." + objLoc.getPath(), name);
     }
 
     private void addResearch(ResourceKey<Research> key, String name) {
         add(
-                key.registry().getPath() + "." + key.location().getNamespace() + "."
-                        + key.location().getPath(),
+                key.registry().getPath() + "." + key.identifier().getNamespace() + "."
+                        + key.identifier().getPath(),
                 name);
     }
 
     private void addResearchDesc(ResourceKey<Research> key, String name) {
         add(
-                "research_desc." + key.location().getNamespace() + "."
-                        + key.location().getPath(),
+                "research_desc." + key.identifier().getNamespace() + "."
+                        + key.identifier().getPath(),
                 name);
     }
 
-    private void addResearchMethod(ResourceLocation key, String name) {
+    private void addResearchMethod(Identifier key, String name) {
         add("research_method." + key.getNamespace() + "." + key.getPath(), name);
     }
 
     private void addResearchMethodName(Supplier<ResearchMethodType> type, String name) {
-        ResourceLocation loc = ResearchdRegistries.RESEARCH_METHOD_TYPE.getKey(type.get());
+        Identifier loc = ResearchdRegistries.RESEARCH_METHOD_TYPE.getKey(type.get());
         add("research_method_type." + loc.getNamespace() + "." + loc.getPath(), name);
     }
 
     private void addResearchEffectName(Supplier<ResearchEffectType> type, String name) {
-        ResourceLocation loc = ResearchdRegistries.RESEARCH_EFFECT_TYPE.getKey(type.get());
+        Identifier loc = ResearchdRegistries.RESEARCH_EFFECT_TYPE.getKey(type.get());
         add("research_effect_type." + loc.getNamespace() + "." + loc.getPath(), name);
     }
 
     private void addResearchPack(ResourceKey<ResearchPackImpl> key, String name) {
-        add("item.researchd.research_pack_" + key.location().toString().replace(':', '_'), name);
+        add("item.researchd.research_pack_" + key.identifier().toString().replace(':', '_'), name);
     }
 
-    private void addResearchPack(ResourceLocation key, String name) {
+    private void addResearchPack(Identifier key, String name) {
         add("item.researchd.research_pack_" + key.toString().replace(':', '_'), name);
     }
 }

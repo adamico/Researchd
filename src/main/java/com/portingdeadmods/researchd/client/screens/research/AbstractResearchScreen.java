@@ -10,7 +10,7 @@ import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.DropDownWidget;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PopupWidget;
 import java.util.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -147,19 +147,19 @@ public abstract class AbstractResearchScreen extends Screen {
     }
 
     protected void renderTooltip(
-            GuiGraphics guiGraphics, PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+            GuiGraphicsExtractor guiGraphics, PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         poseStack.translate(0, 0, RdZIndex.TOOLTIP);
 
         if (tooltip != null) {
-            guiGraphics.renderComponentTooltip(
+            guiGraphics.setComponentTooltipForNextFrame(
                     com.portingdeadmods.researchd.utils.GuiUtils.getFont(), tooltip, mouseX, mouseY);
         }
     }
 
-    protected abstract void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick);
+    protected abstract void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick);
 
     @Override
-    public final void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public final void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         setTooltip(null);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -174,10 +174,10 @@ public abstract class AbstractResearchScreen extends Screen {
             for (PopupWidget popupWidget : this.popupWidgets) {
                 poseStack.translate(0, 0, RdZIndex.POPUP_STEP);
 
-                popupWidget.render(guiGraphics, mouseX, mouseY, partialTick);
+                popupWidget.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
                 for (AbstractWidget widget : popupWidget.getWidgets()) {
-                    widget.render(guiGraphics, mouseX, mouseY, partialTick);
+                    widget.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
                 }
             }
 

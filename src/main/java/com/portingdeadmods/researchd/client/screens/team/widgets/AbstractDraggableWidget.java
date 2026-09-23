@@ -1,6 +1,6 @@
 package com.portingdeadmods.researchd.client.screens.team.widgets;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -14,7 +14,7 @@ public abstract class AbstractDraggableWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int i1, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int i1, float v) {
         if (this.updateIsHovered) {
             this.isHovered = this.isRectHovered(guiGraphics, i, i1, this.getWidth(), 12);
         }
@@ -49,7 +49,7 @@ public abstract class AbstractDraggableWidget extends AbstractWidget {
         return this.isHovered;
     }
 
-    protected boolean isRectHovered(GuiGraphics guiGraphics, int mouseX, int mouseY, int width, int height) {
+    protected boolean isRectHovered(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, int width, int height) {
         return guiGraphics.containsPointInScissor(mouseX, mouseY)
                 && mouseX >= this.getX()
                 && mouseY >= this.getY()

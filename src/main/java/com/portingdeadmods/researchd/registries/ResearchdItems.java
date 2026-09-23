@@ -1,6 +1,6 @@
 package com.portingdeadmods.researchd.registries;
 
-import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterItems;
+import com.portingdeadmods.portingdeadlibs.api.misc.PDLDeferredRegisterItems;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.content.items.ResearchLabItem;
 import com.portingdeadmods.researchd.content.items.ResearchPackItem;

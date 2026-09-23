@@ -59,7 +59,7 @@ public final class ResearchdServerTickHandler {
                         }
                     } else {
                         Researchd.LOGGER.error(
-                                "Current research progress for research {} is null", currentResearch.location());
+                                "Current research progress for research {} is null", currentResearch.identifier());
                     }
                 }
             }

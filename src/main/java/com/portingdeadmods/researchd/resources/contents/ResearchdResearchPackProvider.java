@@ -9,8 +9,8 @@ import com.portingdeadmods.researchd.registries.ResearchdItems;
 import com.portingdeadmods.researchd.resources.ResearchdDatagenProvider;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public interface ResearchdResearchPackProvider extends ResearchdDatagenProvider<ResearchPack> {
@@ -22,7 +22,7 @@ public interface ResearchdResearchPackProvider extends ResearchdDatagenProvider<
 
     default ResourceKey<ResearchPack> packKey(String name) {
         return ResourceKey.create(
-                ResearchdRegistries.RESEARCH_PACK_KEY, ResourceLocation.fromNamespaceAndPath(this.modid(), name));
+                ResearchdRegistries.RESEARCH_PACK_KEY, Identifier.fromNamespaceAndPath(this.modid(), name));
     }
 
     static ItemStack asStack(ResourceKey<ResearchPack> key, int count) {
@@ -36,7 +36,7 @@ public interface ResearchdResearchPackProvider extends ResearchdDatagenProvider<
         return asStack(key, 1);
     }
 
-    static ItemStack asStack(ResourceLocation key) {
+    static ItemStack asStack(Identifier key) {
         return asStack(ResourceKey.create(ResearchdRegistries.RESEARCH_PACK_KEY, key), 1);
     }
 }

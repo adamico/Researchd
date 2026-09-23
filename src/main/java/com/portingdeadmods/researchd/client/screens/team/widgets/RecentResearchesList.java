@@ -11,9 +11,9 @@ import com.portingdeadmods.researchd.utils.NumberUtils;
 import java.util.Collection;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
@@ -42,7 +42,7 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
 
     @Override
     public void internalRenderItem(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             ResearchInstance research,
             int xIndex,
             int index,
@@ -50,7 +50,7 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
             int top,
             int mouseX,
             int mouseY) {
-        ResourceLocation resourcelocation =
+        Identifier resourcelocation =
                 ResearchTeamScreen.RECENT_RESEARCH_SPRITES.get(true, this.isItemHovered(index, mouseX, mouseY));
         guiGraphics.blitSprite(resourcelocation, left, top, this.getItemWidth(), this.getItemHeight());
 
@@ -59,7 +59,7 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
         int padding = (int) ((34f - 16f * scale) / 2f); // 32 + 2 (smth smth border 2px)
 
         ResearchScreen.CLIENT_ICONS
-                .get(research.getResearch().location())
+                .get(research.getResearch().identifier())
                 .render(
                         guiGraphics,
                         (int) (((float) left + padding) / scale),
@@ -74,7 +74,7 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
         if (level == null) return;
 
         Component researchName = research.getDisplayName(level);
-        guiGraphics.drawString(minecraft.font, researchName, left + 32, top + 4, 0xFFFFFF);
+        guiGraphics.text(minecraft.font, researchName, left + 32, top + 4, 0xFFFFFF);
 
         UUID researchedByUUID = research.getResearchedPlayer();
         String researchedBy;
@@ -94,7 +94,7 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
         {
             float metadataScale = 0.75f;
             poseStack.scale(metadataScale, metadataScale, metadataScale);
-            guiGraphics.drawString(
+            guiGraphics.text(
                     minecraft.font,
                     metadata,
                     (int) ((left + 32) / metadataScale),

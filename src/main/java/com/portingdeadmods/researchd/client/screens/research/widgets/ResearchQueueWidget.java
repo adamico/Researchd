@@ -18,15 +18,15 @@ import com.portingdeadmods.researchd.networking.research.ResearchQueueRemovePayl
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.util.ARGB;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class ResearchQueueWidget extends ResearchScreenWidget {
-    private static final ResourceLocation BACKGROUND_TEXTURE = Researchd.rl("textures/gui/research_queue.png");
+    private static final Identifier BACKGROUND_TEXTURE = Researchd.rl("textures/gui/research_queue.png");
     private static final int BACKGROUND_WIDTH = 174;
     private static final int BACKGROUND_HEIGHT = 40;
 
@@ -54,13 +54,13 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         GuiUtils.drawImg(guiGraphics, BACKGROUND_TEXTURE, getX(), getY(), width, height);
 
         int paddingX = 12;
         int paddingY = 14;
 
-        guiGraphics.drawString(Minecraft.getInstance().font, "Research Queue", paddingX - 1, 4, -1);
+        guiGraphics.text(Minecraft.getInstance().font, "Research Queue", paddingX - 1, 4, -1);
 
         ResearchTeam team = ResearchTeamHelperClient.getTeam();
 
@@ -115,7 +115,7 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
         if (this.queue.size() > index) {
             ResourceKey<Research> researchKey = this.queue.get(index);
             this.queue.remove(index, true);
-            PacketDistributor.sendToServer(new ResearchQueueRemovePayload(researchKey));
+            ClientPacketDistributor.sendToServer(new ResearchQueueRemovePayload(researchKey));
 
             // Instantaneous Effect
             ResearchTeam team = ResearchTeamHelperClient.getTeam();
@@ -127,7 +127,13 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
     }
 
     private void renderQueuePanel(
-            GuiGraphics guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY, int index) {
+            GuiGraphicsExtractor guiGraphics,
+            ResearchInstance instance,
+            int x,
+            int y,
+            int mouseX,
+            int mouseY,
+            int index) {
         if (instance == null) return;
 
         if (index == 0) {
@@ -139,9 +145,9 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
         if (this.isHovering(guiGraphics, mouseX, mouseY, x, y, PANEL_WIDTH, PANEL_HEIGHT)) {
             Font font = Minecraft.getInstance().font;
 
-            int color = FastColor.ARGB32.color(120, 20, 20, 20);
+            int color = ARGB.color(120, 20, 20, 20);
             if (this.isHovering(guiGraphics, mouseX, mouseY, x, y + 17, PANEL_WIDTH, PANEL_HEIGHT - 17)) {
-                color = FastColor.ARGB32.color(120, 90, 90, 90);
+                color = ARGB.color(120, 90, 90, 90);
             }
             guiGraphics.fillGradient(x, y + 17, x + PANEL_WIDTH, y + PANEL_HEIGHT, color, color);
 
@@ -150,14 +156,14 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
             poseStack.pushPose();
             {
                 poseStack.translate(0, 0, RdZIndex.QUEUE_REMOVE_ICON);
-                guiGraphics.drawString(font, "x", x + 10 - (font.width("x") / 2), y + 16, -1, false);
+                guiGraphics.text(font, "x", x + 10 - (font.width("x") / 2), y + 16, -1, false);
             }
             poseStack.popPose();
         }
     }
 
     private void renderResearchingResearchPanel(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             ResearchInstance instance,
             int x,
             int y,
@@ -184,7 +190,7 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
                 spriteType.getHeight());
 
         ClientResearchIcon<?> icon =
-                ResearchScreen.CLIENT_ICONS.get(instance.getResearch().location());
+                ResearchScreen.CLIENT_ICONS.get(instance.getResearch().identifier());
         if (icon != null) {
             icon.render(guiGraphics, x + 2, y + 2, mouseX, mouseY, 1, 0);
         }
@@ -195,7 +201,8 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
         }
     }
 
-    private boolean isHovering(GuiGraphics guiGraphics, int mouseX, int mouseY, int x, int y, int width, int height) {
+    private boolean isHovering(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, int x, int y, int width, int height) {
         return (guiGraphics == null || guiGraphics.containsPointInScissor(mouseX, mouseY))
                 && mouseX >= x
                 && mouseY >= y

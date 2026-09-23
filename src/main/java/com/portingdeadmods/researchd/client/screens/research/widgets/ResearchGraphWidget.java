@@ -29,12 +29,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 public class ResearchGraphWidget extends AbstractWidget {
@@ -269,7 +269,7 @@ public class ResearchGraphWidget extends AbstractWidget {
         return this.graph;
     }
 
-    private void renderHeader(GuiGraphics guiGraphics, int x) {
+    private void renderHeader(GuiGraphicsExtractor guiGraphics, int x) {
         if (this.graph == null) return;
 
         Minecraft mc = Minecraft.getInstance();
@@ -278,7 +278,7 @@ public class ResearchGraphWidget extends AbstractWidget {
         int y = 12;
 
         ResearchPage page = this.researchScreen.getResearchPagesList().getSelectedPage();
-        ResourceLocation pageId = page != null ? page.id() : ResearchPage.DEFAULT_PAGE_ID;
+        Identifier pageId = page != null ? page.id() : ResearchPage.DEFAULT_PAGE_ID;
 
         // Completion text pos is used to wrap title so it needs to be done before
         ResearchTeam team = ResearchTeamHelperClient.getTeam();
@@ -317,11 +317,11 @@ public class ResearchGraphWidget extends AbstractWidget {
                 false);
 
         // Completion count (right-aligned)
-        guiGraphics.drawString(font, completionText, completionTextX, y, 0xFFFFFF, true);
+        guiGraphics.text(font, completionText, completionTextX, y, 0xFFFFFF, true);
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         if (this.graph == null || this.graph.nodes() == null) {
             return;
         }
@@ -362,7 +362,7 @@ public class ResearchGraphWidget extends AbstractWidget {
                     ResearchScreenWidget.renderResearchPanel(
                             guiGraphics, node.getInstance(), scaledX + 1, scaledY, mouseX, mouseY, ROOT_NODE_SCALING);
                 } else {
-                    node.render(guiGraphics, mouseX, mouseY, v);
+                    node.extractRenderState(guiGraphics, mouseX, mouseY, v);
                 }
             }
         }
@@ -378,7 +378,7 @@ public class ResearchGraphWidget extends AbstractWidget {
     }
 
     // TODO: Cache hovered node like the isHovered field
-    public void renderNodeTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderNodeTooltips(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (!this.isHovered() || this.graph == null || this.graph.nodes() == null) return;
 
         for (ResearchNode node : this.graph.nodes().values()) {

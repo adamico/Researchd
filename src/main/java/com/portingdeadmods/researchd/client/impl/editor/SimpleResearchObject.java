@@ -22,7 +22,7 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -92,10 +92,10 @@ public class SimpleResearchObject implements StandaloneEditorObject<SimpleResear
     }
 
     @Override
-    public ResourceLocation createId(RememberingLinearLayout layout, String namespace) {
+    public Identifier createId(RememberingLinearLayout layout, String namespace) {
         String nameEditBox = TextUtils.camelToSnake(
                 layout.getChild("name_edit_box", BackgroundEditBox.class).getValue());
-        return ResourceLocation.fromNamespaceAndPath(namespace, nameEditBox);
+        return Identifier.fromNamespaceAndPath(namespace, nameEditBox);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class SimpleResearchObject implements StandaloneEditorObject<SimpleResear
                 layout.getChild("parents_selector", ResearchSelectorListWidget.class)
                         .getResearches(),
                 layout.getChild("requires_parents", Checkbox.class).selected(),
-                !page.isEmpty() ? ResourceLocation.parse(page) : ResearchPage.DEFAULT_PAGE_ID,
+                !page.isEmpty() ? Identifier.parse(page) : ResearchPage.DEFAULT_PAGE_ID,
                 display);
     }
 }

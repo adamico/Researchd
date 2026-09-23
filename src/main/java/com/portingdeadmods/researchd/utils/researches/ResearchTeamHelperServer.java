@@ -428,7 +428,7 @@ public final class ResearchTeamHelperServer {
         ResearchTeamImpl team = (ResearchTeamImpl) getTeamByMember(requester);
         if (team == null) return;
 
-        ServerLevel level = requester.serverLevel();
+        ServerLevel level = requester.level();
 
         // Error Safety (inviting yourself)
         if (requester.getUUID().equals(invited)) {
@@ -483,7 +483,7 @@ public final class ResearchTeamHelperServer {
                     : " [no progress]";
             dump.add(Component.literal("┣ Current: ")
                     .withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(current.location().toString()).withStyle(ChatFormatting.AQUA))
+                    .append(Component.literal(current.identifier().toString()).withStyle(ChatFormatting.AQUA))
                     .append(Component.literal(progressStr).withStyle(ChatFormatting.YELLOW)));
         } else {
             dump.add(Component.literal("┣ Current: ")
@@ -498,7 +498,7 @@ public final class ResearchTeamHelperServer {
             for (int i = 1; i < queueSize; i++) {
                 if (i > 1) queueLine.append(Component.literal(", ").withStyle(ChatFormatting.DARK_GRAY));
                 queueLine.append(
-                        Component.literal(team.getQueue().get(i).location().toString())
+                        Component.literal(team.getQueue().get(i).identifier().toString())
                                 .withStyle(ChatFormatting.AQUA));
             }
             dump.add(queueLine);
@@ -506,14 +506,14 @@ public final class ResearchTeamHelperServer {
 
         List<Map.Entry<ResourceKey<Research>, ResearchInstance>> sorted =
                 new ArrayList<>(team.getResearches().entrySet());
-        sorted.sort(Comparator.comparing(e -> e.getKey().location().toString()));
+        sorted.sort(Comparator.comparing(e -> e.getKey().identifier().toString()));
         dump.add(
                 Component.literal("┣ Researches (%d):".formatted(sorted.size())).withStyle(ChatFormatting.GRAY));
         for (Map.Entry<ResourceKey<Research>, ResearchInstance> entry : sorted) {
             ResearchStatus status = entry.getValue().getResearchStatus();
             dump.add(Component.literal("┣  ")
                     .withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(entry.getKey().location().toString())
+                    .append(Component.literal(entry.getKey().identifier().toString())
                             .withStyle(ChatFormatting.AQUA))
                     .append(Component.literal(" — ").withStyle(ChatFormatting.DARK_GRAY))
                     .append(Component.literal(status.getSerializedName()).withStyle(statusColor(status))));

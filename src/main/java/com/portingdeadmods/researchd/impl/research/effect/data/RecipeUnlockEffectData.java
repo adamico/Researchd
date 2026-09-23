@@ -7,20 +7,20 @@ import com.portingdeadmods.researchd.api.research.serializers.ResearchEffectData
 import com.portingdeadmods.researchd.impl.research.effect.RecipeUnlockEffect;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
-public record RecipeUnlockEffectData(UniqueArray<ResourceLocation> blockedRecipes)
+public record RecipeUnlockEffectData(UniqueArray<Identifier> blockedRecipes)
         implements ResearchEffectData<RecipeUnlockEffect> {
     public static final RecipeUnlockEffectData EMPTY = new RecipeUnlockEffectData(new UniqueArray<>());
 
-    public static final MapCodec<RecipeUnlockEffectData> CODEC = UniqueArray.CODEC(ResourceLocation.CODEC)
+    public static final MapCodec<RecipeUnlockEffectData> CODEC = UniqueArray.CODEC(Identifier.CODEC)
             .xmap(RecipeUnlockEffectData::new, RecipeUnlockEffectData::blockedRecipes)
             .fieldOf("blocked_recipes");
     public static final StreamCodec<RegistryFriendlyByteBuf, RecipeUnlockEffectData> STREAM_CODEC =
             StreamCodec.composite(
-                    UniqueArray.STREAM_CODEC(ResourceLocation.STREAM_CODEC),
+                    UniqueArray.STREAM_CODEC(Identifier.STREAM_CODEC),
                     RecipeUnlockEffectData::blockedRecipes,
                     RecipeUnlockEffectData::new);
     public static final ResearchEffectDataType<RecipeUnlockEffectData> TYPE =
@@ -32,17 +32,17 @@ public record RecipeUnlockEffectData(UniqueArray<ResourceLocation> blockedRecipe
 
     @Override
     public void add(RecipeUnlockEffect recipe, Level level) {
-        UniqueArray<ResourceLocation> recipes = this.blockedRecipes();
+        UniqueArray<Identifier> recipes = this.blockedRecipes();
         recipe.getRecipes(level).forEach(holder -> recipes.add(holder.id()));
     }
 
     @Override
     public void remove(RecipeUnlockEffect recipe, Level level) {
-        UniqueArray<ResourceLocation> recipes = this.blockedRecipes();
+        UniqueArray<Identifier> recipes = this.blockedRecipes();
         recipe.getRecipes(level).forEach(holder -> recipes.remove(holder.id()));
     }
 
-    public boolean contains(ResourceLocation recipeId) {
+    public boolean contains(Identifier recipeId) {
         return this.blockedRecipes.contains(recipeId);
     }
 
@@ -56,14 +56,14 @@ public record RecipeUnlockEffectData(UniqueArray<ResourceLocation> blockedRecipe
 
     public UniqueArray<RecipeHolder<?>> resolve(Level level) {
         UniqueArray<RecipeHolder<?>> resolved = new UniqueArray<>();
-        for (ResourceLocation id : this.blockedRecipes()) {
-            level.getRecipeManager().byKey(id).ifPresent(resolved::add);
+        for (Identifier id : this.blockedRecipes()) {
+            level.recipeAccess().byKey(id).ifPresent(resolved::add);
         }
         return resolved;
     }
 
     @Override
-    public UniqueArray<ResourceLocation> getAll() {
+    public UniqueArray<Identifier> getAll() {
         return this.blockedRecipes();
     }
 

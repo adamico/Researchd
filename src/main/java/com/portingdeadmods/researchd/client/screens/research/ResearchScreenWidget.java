@@ -5,10 +5,10 @@ import com.portingdeadmods.researchd.api.client.ClientResearchIcon;
 import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.api.research.ResearchStatus;
 import javax.annotation.Nullable;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 
 public abstract class ResearchScreenWidget extends AbstractWidget {
@@ -25,12 +25,18 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}
 
     public static void renderResearchPanel(
-            GuiGraphics guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY, float scale) {
+            GuiGraphicsExtractor guiGraphics,
+            ResearchInstance instance,
+            int x,
+            int y,
+            int mouseX,
+            int mouseY,
+            float scale) {
         renderResearchPanel(guiGraphics, instance, x, y, mouseX, mouseY, scale, true);
     }
 
     public static void renderResearchPanel(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             ResearchInstance instance,
             int x,
             int y,
@@ -42,7 +48,7 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
     }
 
     public static void renderResearchPanel(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             ResearchInstance instance,
             int x,
             int y,
@@ -68,7 +74,7 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
                 height);
 
         ClientResearchIcon<?> clientResearchIcon =
-                ResearchScreen.CLIENT_ICONS.get(instance.getResearch().location());
+                ResearchScreen.CLIENT_ICONS.get(instance.getResearch().identifier());
         if (clientResearchIcon != null) {
             clientResearchIcon.render(guiGraphics, x, y, mouseX, mouseY, scale, 0);
         }
@@ -81,22 +87,22 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
     }
 
     public static void renderSmallResearchPanel(
-            GuiGraphics guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY) {
+            GuiGraphicsExtractor guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY) {
         renderResearchPanel(guiGraphics, instance, x, y, mouseX, mouseY, true, PanelSpriteType.SMALL);
     }
 
     public static void renderResearchPanel(
-            GuiGraphics guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY) {
+            GuiGraphicsExtractor guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY) {
         renderResearchPanel(guiGraphics, instance, x, y, mouseX, mouseY, true, PanelSpriteType.NORMAL);
     }
 
     public static void renderTallResearchPanel(
-            GuiGraphics guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY) {
+            GuiGraphicsExtractor guiGraphics, ResearchInstance instance, int x, int y, int mouseX, int mouseY) {
         renderResearchPanel(guiGraphics, instance, x, y, mouseX, mouseY, true, PanelSpriteType.TALL);
     }
 
     public static void renderResearchPanel(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             ResearchInstance instance,
             int x,
             int y,
@@ -108,7 +114,7 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
         GuiUtils.drawImg(guiGraphics, status.getSpriteTexture(spriteType), x, y, PANEL_WIDTH, spriteType.getHeight());
 
         ClientResearchIcon<?> clientResearchIcon =
-                ResearchScreen.CLIENT_ICONS.get(instance.getResearch().location());
+                ResearchScreen.CLIENT_ICONS.get(instance.getResearch().identifier());
 
         if (clientResearchIcon != null) {
             clientResearchIcon.render(guiGraphics, x + 2, y + 2, mouseX, mouseY, 1, 0);
@@ -120,12 +126,13 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
         }
     }
 
-    public static boolean isPanelHovered(@Nullable GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY) {
+    public static boolean isPanelHovered(
+            @Nullable GuiGraphicsExtractor guiGraphics, int x, int y, int mouseX, int mouseY) {
         return isPanelHovered(guiGraphics, x, y, mouseX, mouseY, 1);
     }
 
     public static boolean isPanelHovered(
-            @Nullable GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY, float scale) {
+            @Nullable GuiGraphicsExtractor guiGraphics, int x, int y, int mouseX, int mouseY, float scale) {
         return (guiGraphics == null || guiGraphics.containsPointInScissor(mouseX, mouseY))
                 && mouseX >= x
                 && mouseY >= y

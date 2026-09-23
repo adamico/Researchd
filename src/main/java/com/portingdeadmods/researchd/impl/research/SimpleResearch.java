@@ -21,8 +21,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
@@ -32,7 +32,7 @@ public record SimpleResearch(
         ResearchEffect researchEffect,
         List<ResourceKey<Research>> parents,
         boolean requiresParent,
-        ResourceLocation researchPage,
+        Identifier researchPage,
         DisplayImpl display)
         implements Research, RegistryDisplay<Research> {
     public static final String ID = "simple";
@@ -43,7 +43,7 @@ public record SimpleResearch(
     }
 
     @Override
-    public ResourceLocation researchPage() {
+    public Identifier researchPage() {
         return this.researchPage;
     }
 
@@ -74,7 +74,7 @@ public record SimpleResearch(
                                 .optionalFieldOf("parents", List.of())
                                 .forGetter(SimpleResearch::parents),
                         Codec.BOOL.orElse(true).fieldOf("requires_parent").forGetter(SimpleResearch::requiresParent),
-                        ResourceLocation.CODEC
+                        Identifier.CODEC
                                 .optionalFieldOf("research_page", ResearchPage.DEFAULT_PAGE_ID)
                                 .forGetter(SimpleResearch::researchPage),
                         DisplayImpl.CODEC
@@ -93,7 +93,7 @@ public record SimpleResearch(
                         SimpleResearch::parents,
                         ByteBufCodecs.BOOL,
                         SimpleResearch::requiresParent,
-                        ResourceLocation.STREAM_CODEC,
+                        Identifier.STREAM_CODEC,
                         SimpleResearch::researchPage,
                         DisplayImpl.STREAM_CODEC,
                         SimpleResearch::display,
@@ -118,7 +118,7 @@ public record SimpleResearch(
         private ResearchEffect researchEffect = EmptyResearchEffect.INSTANCE;
         private final UniqueArray<ResourceKey<Research>> parents = new UniqueArray<>();
         private boolean requiresParent = false;
-        private ResourceLocation researchPage = ResearchPage.DEFAULT_PAGE_ID;
+        private Identifier researchPage = ResearchPage.DEFAULT_PAGE_ID;
         private Optional<Component> literalName = Optional.empty();
         private Optional<Component> literalDescription = Optional.empty();
 
@@ -160,7 +160,7 @@ public record SimpleResearch(
             return this;
         }
 
-        public Builder researchPage(ResourceLocation researchPage) {
+        public Builder researchPage(Identifier researchPage) {
             this.researchPage = researchPage;
             return this;
         }

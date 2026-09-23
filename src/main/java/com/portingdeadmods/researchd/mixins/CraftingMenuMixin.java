@@ -30,7 +30,7 @@ public abstract class CraftingMenuMixin {
             RecipeHolder<CraftingRecipe> recipe,
             Operation<Void> original) {
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             original.call(menu, level, player, craftSlots, resultSlots, recipe);
             return;
         }

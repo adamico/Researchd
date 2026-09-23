@@ -5,8 +5,8 @@ import com.portingdeadmods.portingdeadlibs.api.capabilities.SidedEnergyStorage;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfig;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigManager;
+import com.portingdeadmods.portingdeadlibs.api.misc.IOAction;
 import com.portingdeadmods.portingdeadlibs.api.resources.DynamicPack;
-import com.portingdeadmods.portingdeadlibs.api.utils.IOAction;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.data.ResearchdAttachments;
 import com.portingdeadmods.researchd.data.ResearchdDataComponents;
@@ -17,7 +17,7 @@ import com.portingdeadmods.researchd.resources.contents.ResearchdDynamicPackCont
 import com.portingdeadmods.researchd.resources.example.ResearchdExamplesSource;
 import com.portingdeadmods.researchd.utils.SpaghettiClient;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -76,7 +76,7 @@ public final class Researchd {
 
         LOGGER.error(formatted);
 
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             SpaghettiClient.sendErrorToChat(formatted);
         }
     }
@@ -182,7 +182,7 @@ public final class Researchd {
         event.dataPackRegistry(ResearchdRegistries.RESEARCH_PACK_KEY, ResearchPackImpl.CODEC, ResearchPackImpl.CODEC);
     }
 
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static Identifier rl(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 }

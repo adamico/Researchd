@@ -76,7 +76,7 @@ public final class RecipeFilterContext {
 
         for (Ingredient ingredient : recipe.getIngredients()) {
             if (ingredient.isEmpty()) continue;
-            for (ItemStack stack : ingredient.getItems()) {
+            for (ItemStack stack : ingredient.items()) {
                 if (!stack.isEmpty() && itemData.isBlocked(stack)) return true;
             }
         }

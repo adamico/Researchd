@@ -7,7 +7,7 @@ import com.portingdeadmods.researchd.impl.research.icons.ItemResearchIcon;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * The {@link ResearchIcon} is a utility interface containing
@@ -32,7 +32,7 @@ public interface ResearchIcon {
      * Usually this is just a constant in the Research
      * Icon class
      */
-    ResourceLocation id();
+    Identifier id();
 
     ResearchIconSerializer<? extends ResearchIcon> getSerializer();
 }

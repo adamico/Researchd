@@ -5,7 +5,7 @@ import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.editor.widgets.dropdowns.RegistrySuggestionDropDownWidget;
 import java.util.List;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.CommonComponents;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +21,7 @@ public class SuggestionRegistryVerifyEditBox extends RegistryVerifyEditBox {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 
         PoseStack poseStack = guiGraphics.pose();

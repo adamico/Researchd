@@ -6,7 +6,7 @@ import com.portingdeadmods.researchd.api.client.renderers.CycledItemRenderer;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget;
 import com.portingdeadmods.researchd.impl.research.icons.ItemResearchIcon;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
 public class ClientItemResearchIcon implements ClientResearchIcon<ItemResearchIcon> {
@@ -22,7 +22,7 @@ public class ClientItemResearchIcon implements ClientResearchIcon<ItemResearchIc
 
     @Override
     public void render(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             int panelLeft,
             int panelTop,
             int mouseX,

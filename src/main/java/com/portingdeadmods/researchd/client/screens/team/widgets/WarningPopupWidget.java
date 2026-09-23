@@ -8,15 +8,15 @@ import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WarningPopupWidget extends AbstractWidget {
-    public static final ResourceLocation TEXTURE = Researchd.rl("textures/gui/popup_window.png");
+    public static final Identifier TEXTURE = Researchd.rl("textures/gui/popup_window.png");
     private Component title;
     private List<Component> bodyText;
     private final Button acceptButton;
@@ -35,7 +35,8 @@ public class WarningPopupWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    protected void extractWidgetRenderState(
+            GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         PoseStack poseStack = guiGraphics.pose();
 
         poseStack.pushPose();
@@ -45,9 +46,9 @@ public class WarningPopupWidget extends AbstractWidget {
             GuiUtils.drawImg(guiGraphics, TEXTURE, getX(), getY(), width, height);
 
             Font font = Minecraft.getInstance().font;
-            guiGraphics.drawCenteredString(font, this.title, getX() + width / 2, getY() + 4, -1);
+            guiGraphics.centeredText(font, this.title, getX() + width / 2, getY() + 4, -1);
             for (int i = 0; i < this.bodyText.size(); i++) {
-                guiGraphics.drawCenteredString(
+                guiGraphics.centeredText(
                         font,
                         this.bodyText.get(i),
                         getX() + width / 2,
@@ -55,8 +56,8 @@ public class WarningPopupWidget extends AbstractWidget {
                         -1);
             }
 
-            this.acceptButton.render(guiGraphics, mouseX, mouseY, partialTicks);
-            this.cancelButton.render(guiGraphics, mouseX, mouseY, partialTicks);
+            this.acceptButton.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+            this.cancelButton.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
         poseStack.popPose();
     }

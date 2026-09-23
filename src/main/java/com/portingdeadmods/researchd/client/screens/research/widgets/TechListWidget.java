@@ -15,23 +15,23 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class TechListWidget extends ResearchScreenWidget {
-    private static final ResourceLocation SCROLLER_SPRITE =
-            ResourceLocation.withDefaultNamespace("container/creative_inventory/scroller");
+    private static final Identifier SCROLLER_SPRITE =
+            Identifier.withDefaultNamespace("container/creative_inventory/scroller");
     private static final int SCROLLER_WIDTH = 12;
     private static final int SCROLLER_HEIGHT = 15;
-    private static final ResourceLocation BACKGROUND_TEXTURE = Researchd.rl("textures/gui/tech_list_screen.png");
-    private static final ResourceLocation BOTTOM_TEXTURE = Researchd.rl("textures/gui/tech_list_bottom.png");
-    private static final ResourceLocation BACKGROUND_TEXTURE_SEARCH_BAR =
+    private static final Identifier BACKGROUND_TEXTURE = Researchd.rl("textures/gui/tech_list_screen.png");
+    private static final Identifier BOTTOM_TEXTURE = Researchd.rl("textures/gui/tech_list_bottom.png");
+    private static final Identifier BACKGROUND_TEXTURE_SEARCH_BAR =
             Researchd.rl("textures/gui/tech_list_screen_search_bar.png");
-    private static final ResourceLocation TECH_LIST_EXPANDABLE =
+    private static final Identifier TECH_LIST_EXPANDABLE =
             Researchd.rl("textures/gui/research_screen/tech_list_expandable.png");
     private static final int BACKGROUND_WIDTH = 174;
     private static final int BACKGROUND_HEIGHT = 150;
@@ -178,7 +178,7 @@ public class TechListWidget extends ResearchScreenWidget {
                 selectedInstance.setResearchedTime(gameTime);
 
                 ResourceKey<Research> researchKey = selectedInstance.getResearch();
-                PacketDistributor.sendToServer(new ResearchQueueAddPayload(researchKey, player, gameTime));
+                ClientPacketDistributor.sendToServer(new ResearchQueueAddPayload(researchKey, player, gameTime));
 
                 // Instantaneous Effect
                 ResearchTeam team = ResearchTeamHelperClient.getTeam();
@@ -193,7 +193,7 @@ public class TechListWidget extends ResearchScreenWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         this.hoveredResearch = null;
         GuiUtils.drawImg(
                 guiGraphics,

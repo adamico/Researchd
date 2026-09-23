@@ -17,15 +17,15 @@ import com.portingdeadmods.researchd.utils.SpaghettiClient;
 import com.portingdeadmods.researchd.utils.researches.ResearchHelperCommon;
 import java.util.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 // Widget for selecting a list of elements horizontally, scrollable with a popup for selecting the element
 public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelectorListWidget.Element> {
-    public static final ResourceLocation BACKGROUND_SPRITES = Researchd.rl("editor_background_research_list");
+    public static final Identifier BACKGROUND_SPRITES = Researchd.rl("editor_background_research_list");
 
     private final PopupWidget parentPopupWidget;
     private UniqueArray<Element> items;
@@ -81,7 +81,7 @@ public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelector
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         guiGraphics.blitSprite(BACKGROUND_SPRITES, this.getX(), this.getY(), this.getWidth() + 2, this.getHeight());
 
         super.renderWidget(guiGraphics, mouseX, mouseY, v);
@@ -113,7 +113,14 @@ public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelector
 
     @Override
     protected void internalRenderItem(
-            GuiGraphics guiGraphics, Element item, int xIndex, int yIndex, int left, int top, int mouseX, int mouseY) {
+            GuiGraphicsExtractor guiGraphics,
+            Element item,
+            int xIndex,
+            int yIndex,
+            int left,
+            int top,
+            int mouseX,
+            int mouseY) {
         item.render(
                 guiGraphics,
                 left,
@@ -127,11 +134,11 @@ public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelector
     }
 
     @Override
-    protected void renderTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
+    protected void renderTooltips(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
         super.renderTooltips(guiGraphics, mouseX, mouseY, v);
 
         if (this.hoveredItem instanceof Element.SimpleElement(ResourceKey<Research> researchKey, Research research)) {
-            guiGraphics.renderTooltip(
+            guiGraphics.setTooltipForNextFrame(
                     GuiUtils.getFont(), ResearchHelperCommon.getResearchName(researchKey, research), mouseX, mouseY);
         }
     }
@@ -141,7 +148,7 @@ public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelector
                 new WidgetSprites(Researchd.rl("editor_background"), Researchd.rl("editor_background_highlighted"));
 
         void render(
-                GuiGraphics guiGraphics,
+                GuiGraphicsExtractor guiGraphics,
                 int x,
                 int y,
                 int width,
@@ -152,11 +159,11 @@ public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelector
                 float partialTick);
 
         record SimpleElement(ResourceKey<Research> researchKey, Research research) implements Element {
-            public static final ResourceLocation REMOVE_ELEMENT_HOVER_SPRITE = Researchd.rl("remove_element_hover");
+            public static final Identifier REMOVE_ELEMENT_HOVER_SPRITE = Researchd.rl("remove_element_hover");
 
             @Override
             public void render(
-                    GuiGraphics guiGraphics,
+                    GuiGraphicsExtractor guiGraphics,
                     int x,
                     int y,
                     int width,
@@ -189,7 +196,7 @@ public class ResearchSelectorListWidget extends ContainerWidget<ResearchSelector
 
             @Override
             public void render(
-                    GuiGraphics guiGraphics,
+                    GuiGraphicsExtractor guiGraphics,
                     int x,
                     int y,
                     int width,

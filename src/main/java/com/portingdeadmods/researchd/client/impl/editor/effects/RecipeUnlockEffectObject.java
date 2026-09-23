@@ -14,14 +14,14 @@ import java.util.Collection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class RecipeUnlockEffectObject implements TypedEditorObject<RecipeUnlockEffect, ResearchEffectType> {
-    public static final ResourceLocation ID = Researchd.rl("recipe_unlock");
+    public static final Identifier ID = Researchd.rl("recipe_unlock");
     public static final RecipeUnlockEffectObject INSTANCE = new RecipeUnlockEffectObject();
 
     @Override
@@ -44,8 +44,8 @@ public class RecipeUnlockEffectObject implements TypedEditorObject<RecipeUnlockE
         // idEditBox.setResponder(newVal -> this.update(layout, context));
     }
 
-    private Collection<ResourceLocation> getIds() {
-        RecipeManager manager = Minecraft.getInstance().level.getRecipeManager();
+    private Collection<Identifier> getIds() {
+        RecipeManager manager = Minecraft.getInstance().level.recipeAccess();
         return manager.getRecipeIds().toList();
     }
 
@@ -53,7 +53,7 @@ public class RecipeUnlockEffectObject implements TypedEditorObject<RecipeUnlockE
     public RecipeUnlockEffect create(RememberingLinearLayout layout) {
         EditableIdListWidget idEditBoxes = layout.getChild("id_edit_boxes", EditableIdListWidget.class);
         return new RecipeUnlockEffect(
-                idEditBoxes.getIds().map(ResourceLocation::parse).toArray(ResourceLocation[]::new));
+                idEditBoxes.getIds().map(Identifier::parse).toArray(Identifier[]::new));
     }
 
     @Override
