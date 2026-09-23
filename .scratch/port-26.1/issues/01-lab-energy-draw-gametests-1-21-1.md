@@ -22,3 +22,5 @@
 - The draw is set by `@BeforeBatch`/`@AfterBatch` on the batches `lab_energy_draw_on` and `lab_energy_draw_off`. Batches run one after another.
 - Found and fixed along the way (separate commit 101f616): new teams all shared the `TeamResearches.EMPTY` queue and progress. The 26.1 port needs the same fix.
 - Mutation check: letting `tryConsumeEnergy` pay without enough energy fails 3 of the 5 tests.
+
+**Open:** `101f616` (new teams shared one research queue, progress and invite list through the mutable `EMPTY` singletons) is a real 1.21.1 bug fix, not test code. It is off the upstream PR along with the GameTests. Decide whether to send it upstream on its own.
