@@ -54,6 +54,14 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+// GameTests live in their own source set so they never ship in the mod jar.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
 neoForge {
     version = project.neo_version
 
@@ -85,6 +93,7 @@ neoForge {
 
         gameTestServer {
             type = "gameTestServer"
+            sourceSet = sourceSets.gametest
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -104,6 +113,7 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.gametest)
         }
     }
 }
