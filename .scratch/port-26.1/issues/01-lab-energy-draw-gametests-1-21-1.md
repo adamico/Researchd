@@ -4,13 +4,21 @@
 
 **Blocked by:** None — can start immediately
 
-**Status:** ready-for-agent
+**Status:** done (commits 101f616, 2fdf315 on lab-energy; push left to maintainer)
 
-- [ ] Draw 0: the Lab progresses and ignores energy
-- [ ] Draw above 0 with an empty buffer: no progress, no Research Pack used, no energy taken
-- [ ] Less than one tick's draw stored: no progress, no Research Pack used, energy unchanged
-- [ ] Fully powered: exactly one tick's draw is taken per tick of progress, and Research Packs are used at the normal rate
-- [ ] Energy inserted through a Lab Part is accepted; extracting through a Lab Part gets nothing
-- [ ] The gameTestServer run passes on a clean checkout
-- [ ] Tests set the Lab Energy Draw config per test and restore it afterwards
+- [x] Draw 0: the Lab progresses and ignores energy
+- [x] Draw above 0 with an empty buffer: no progress, no Research Pack used, no energy taken
+- [x] Less than one tick's draw stored: no progress, no Research Pack used, energy unchanged
+- [x] Fully powered: exactly one tick's draw is taken per tick of progress, and Research Packs are used at the normal rate
+- [x] Energy inserted through a Lab Part is accepted; extracting through a Lab Part gets nothing
+- [x] The gameTestServer run passes on a clean checkout
+- [x] Tests set the Lab Energy Draw config per test and restore it afterwards
 - [ ] Pushing to the upstream PR is left to the maintainer
+
+**Notes from implementation:**
+- Tests live in the `gametest` source set: `src/gametest/java/.../gametest/LabEnergyDrawTests.java`, with the template `src/gametest/resources/data/researchd/structure/empty_7x7x7.nbt`.
+- The Lab is placed with `ResearchLabItem.place` by a mock player whose team is fresh. The structure is rotated, so the Lab is found by searching around the clicked position.
+- The controller sets up its pack slots in `onLoad`, which runs on the first tick, so the Lab is stocked at tick 1.
+- The draw is set by `@BeforeBatch`/`@AfterBatch` on the batches `lab_energy_draw_on` and `lab_energy_draw_off`. Batches run one after another.
+- Found and fixed along the way (separate commit 101f616): new teams all shared the `TeamResearches.EMPTY` queue and progress. The 26.1 port needs the same fix.
+- Mutation check: letting `tryConsumeEnergy` pay without enough energy fails 3 of the 5 tests.
