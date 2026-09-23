@@ -23,3 +23,4 @@
 - Code outside the excluded packages still imports them. The migrate batches own those call sites (see the extra item in 03–06).
 - Porting-Dead-Libs 1.1.15 from JitPack reports mod version 1.1.16; the `[1.1.15, 1.2.0)` range accepts it.
 - `.github/workflows/build-and-release.yml` still sets up Java 21; the toolchain auto-provisions 25. Worth bumping in 17.
+- Jade had no code or dependency on `lab-energy`, so there was nothing to exclude; it arrives new in 16.
