@@ -14,7 +14,7 @@
   - the editor's recipe picker
   - the tooltip on Locked items
   - JEI subtypes and recipe pages
-  - FTB Teams and native teams
+  - FTB Teams and native teams: create, join and leave (the native-teams check deferred from 07)
   - a dedicated server start
 - [ ] The jar is named with the mod version and MC version, and its metadata doesn't claim to be the official upstream release
 - [ ] Release notes drafted: excluded integrations, no migration from 1.21.1 worlds, how to enable the Lab Energy Draw

@@ -4,14 +4,14 @@
 
 **Blocked by:** 03, 04, 05, 06
 
-**Status:** agent part done (commit on `26.1`; push left to maintainer). Manual client checks are left to the maintainer.
+**Status:** done (commit on `26.1`; push left to maintainer). The native-teams manual check was deferred to 17 on 2026-09-24.
 
 - [x] Full compile with no errors. `compileJava` is clean. The 1.21.1 `LabEnergyDrawTests` is excluded from the gametest source set until 08 (`TODO(26.1 port, 08)` in `build.gradle`).
 - [x] Datagen regenerated, including the 26.1 item model definitions. The output is **not committed**: `src/generated` is in upstream's `.gitignore`, and CI runs `runData` before `build`.
 - [x] The dedicated server starts with no Researchd errors in the log
-- [ ] The client starts, a world with the default Researchd datapack loads, and the research screen opens. The client, the research screen and a world with the dev test datapack were checked on 2026-09-24. Not yet checked: a world with the default `example_researches` pack enabled.
+- [x] The client starts, a world with the default Researchd datapack loads, and the research screen opens. The client, the research screen and a world with the dev test datapack were checked on 2026-09-24. The `example_researches` pack was checked by the maintainer on 2026-09-24.
 - [x] Manual: the Research Lab forms, accepts Research Packs through a Lab Part, and completes a research (2026-09-24, dev test datapack, draw at 0)
-- [ ] Manual: team create, join and leave work with native teams
+- [ ] ~~Manual: team create, join and leave work with native teams~~ Deferred to 17 (its manual checklist covers FTB Teams and native teams).
 - [x] Anything noted by 03–06 (see the Notes in 03) is either fixed or filed as a follow-up ticket
 
 **Notes (for 08 and later tickets):**
