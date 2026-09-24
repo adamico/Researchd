@@ -16,6 +16,7 @@ import java.util.function.Function;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -146,21 +147,22 @@ public abstract class AbstractStandaloneCreationPopupWidget<O> extends PopupWidg
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 ResearchMethodCreationPopupWidget.BACKGROUND_SPRITE,
                 this.getX(),
                 this.getY(),
                 this.getWidth(),
                 this.getHeight());
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.drawScrollingString(
+                guiGraphics.textRenderer(),
                 GuiUtils.getFont(),
                 this.getTitle(),
                 this.getX() + 5,
                 this.getX() + this.getWidth() - 5,
-                this.getY() + 8,
-                -1);
+                this.getY() + 8);
     }
 
     @Override

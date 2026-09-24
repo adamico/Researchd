@@ -34,7 +34,7 @@ public class DimensionUnlockEffectObject implements TypedEditorObject<DimensionU
             RememberingLinearLayout layout, @Nullable DimensionUnlockEffect previous, EditorContext context) {
         layout.addWidget(null, GuiUtils.stringWidget("Unlocks Dimension:"));
         Optional<Registry<DimensionType>> registry =
-                Minecraft.getInstance().level.registryAccess().registry(Registries.DIMENSION_TYPE);
+                Minecraft.getInstance().level.registryAccess().lookup(Registries.DIMENSION_TYPE);
         registry.ifPresent(dimensionTypes -> {
             RegistryVerifyEditBox idEditBox = layout.addWidget(
                     "id_edit_box", RegistryVerifyEditBox.forRegistry(dimensionTypes, context.innerWidth() - 8, 16));

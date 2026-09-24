@@ -1,9 +1,7 @@
 package com.portingdeadmods.researchd.client.screens.editor.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.editmode.PackLocation;
-import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PDLButton;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PDLImageButton;
 import net.minecraft.client.Minecraft;
@@ -12,12 +10,13 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.util.ARGB;
 
 public class SelectPackSearchBarWidget extends AbstractWidget {
     public static final Identifier SEARCH_BAR_SPRITE = Researchd.rl("editor_search_bar");
@@ -78,18 +77,18 @@ public class SelectPackSearchBarWidget extends AbstractWidget {
     @Override
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(SEARCH_BAR_SPRITE, this.getX(), this.getY(), 156, 16);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SEARCH_BAR_SPRITE, this.getX(), this.getY(), 156, 16);
 
         this.createPackButton.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         this.selectPackDirectoryButton.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.drawScrollingString(
+                guiGraphics.textRenderer(),
                 Minecraft.getInstance().font,
                 getText(this.selectedPack),
                 this.getX() + 2,
                 this.getX() + 156 - 32 - 1,
-                this.getY() + 2 + (14 - Minecraft.getInstance().font.lineHeight) / 2,
-                ARGB.color(255, 255, 255));
+                this.getY() + 2 + (14 - Minecraft.getInstance().font.lineHeight) / 2);
 
         if (!(this.createPackButton.isHovered() || this.selectPackDirectoryButton.isHovered())
                 && this.selectedPack != null
@@ -101,25 +100,20 @@ public class SelectPackSearchBarWidget extends AbstractWidget {
                     mouseY);
         }
 
-        PoseStack poseStack = guiGraphics.pose();
-        poseStack.pushPose();
-        {
-            poseStack.translate(0, 0, RdZIndex.DROP_DOWN);
-
-            this.dropDownWidget.render(
-                    guiGraphics, this.getX(), this.getY() + this.getHeight(), mouseX, mouseY, partialTick);
-        }
-        poseStack.popPose();
+        // TODO(26.1 port, 07): 26.1 GUI layering follows draw order, so the drop-down no longer sits above
+        // widgets drawn after it; check it in the client checklist
+        this.dropDownWidget.render(
+                guiGraphics, this.getX(), this.getY() + this.getHeight(), mouseX, mouseY, partialTick);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.createPackButton.mouseClicked(mouseX, mouseY, button)) return true;
-        if (this.selectPackDirectoryButton.mouseClicked(mouseX, mouseY, button)) return false;
-        if (this.dropDownWidget.isVisible() && this.dropDownWidget.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.createPackButton.mouseClicked(event, doubleClick)) return true;
+        if (this.selectPackDirectoryButton.mouseClicked(event, doubleClick)) return false;
+        if (this.dropDownWidget.isVisible() && this.dropDownWidget.mouseClicked(event, doubleClick)) {
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override

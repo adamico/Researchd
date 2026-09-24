@@ -20,6 +20,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -126,15 +127,26 @@ public class ResearchMethodCreationPopupWidget extends PopupWidget {
     @Override
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(BACKGROUND_SPRITE, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                BACKGROUND_SPRITE,
+                this.getX(),
+                this.getY(),
+                this.getWidth(),
+                this.getHeight());
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         ClientResearchIcon.getClientIcon(this.clientResearchMethod.type().icon())
                 .render(guiGraphics, this.getX() + 3, this.getY() + 3, mouseX, mouseY, 1, partialTick);
         Component name = this.clientResearchMethod.type().getName();
         guiGraphics.drawScrollingString(
-                GuiUtils.getFont(), name, this.getX() + 21, this.getX() + this.getWidth() - 6, this.getY() + 7, -1);
+                guiGraphics.textRenderer(),
+                GuiUtils.getFont(),
+                name,
+                this.getX() + 21,
+                this.getX() + this.getWidth() - 6,
+                this.getY() + 7);
     }
 
     @Override

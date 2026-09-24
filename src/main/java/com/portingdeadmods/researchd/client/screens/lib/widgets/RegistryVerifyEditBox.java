@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RegistryVerifyEditBox extends BackgroundEditBox {
     private final @Nullable Registry<?> registry;
+    /** With neither a registry nor ids, any well-formed id is valid */
     private final @Nullable Collection<Identifier> ids;
 
     public RegistryVerifyEditBox(
@@ -61,7 +62,7 @@ public class RegistryVerifyEditBox extends BackgroundEditBox {
         if (!this.isValid(id)) {
             this.setTextColor(ARGB.color(211, 47, 47));
         } else {
-            this.setTextColor(14737632);
+            this.setTextColor(0xFFE0E0E0);
         }
     }
 
@@ -71,7 +72,7 @@ public class RegistryVerifyEditBox extends BackgroundEditBox {
 
     public <T> T getObjectById() {
         if (this.isValid() && this.registry != null) {
-            return (T) registry.get(this.createId());
+            return (T) registry.getValue(this.createId());
         }
         return null;
     }
@@ -83,6 +84,6 @@ public class RegistryVerifyEditBox extends BackgroundEditBox {
     public boolean isValid(Identifier id) {
         if (this.registry != null) return this.registry.containsKey(id);
         else if (this.ids != null) return this.ids.contains(id);
-        return false;
+        return true;
     }
 }

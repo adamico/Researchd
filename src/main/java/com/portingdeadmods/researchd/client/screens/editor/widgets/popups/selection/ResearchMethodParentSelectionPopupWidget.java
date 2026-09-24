@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,13 +49,14 @@ public class ResearchMethodParentSelectionPopupWidget extends PopupWidget {
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 EditorSharedSprites.EDITOR_WIDGET_BACKGROUND_SPRITE,
                 this.getX(),
                 this.getY(),
                 this.getWidth(),
                 this.getHeight());
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -119,6 +121,7 @@ public class ResearchMethodParentSelectionPopupWidget extends PopupWidget {
                 int mouseX,
                 int mouseY) {
             guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
                     EditorSharedSprites.EDITOR_BACKGROUND_SPRITES.get(
                             true, this.isItemHovered(xIndex, yIndex, mouseX, mouseY)),
                     left,

@@ -1,8 +1,6 @@
 package com.portingdeadmods.researchd.client.screens.editor.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.portingdeadmods.researchd.Researchd;
-import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.AbstractLayoutWidget;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PDLImageButton;
 import net.minecraft.client.Minecraft;
@@ -10,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -43,15 +42,20 @@ public class EditorSideBarWidget extends AbstractLayoutWidget<LinearLayout> {
     @Override
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        PoseStack poseStack = guiGraphics.pose();
-        poseStack.pushPose();
-        {
-            poseStack.translate(0, 0, RdZIndex.EDITOR_SIDEBAR);
-            guiGraphics.blit(
-                    EDITOR_SIDE_BAR_TEXTURE, this.getX(), this.getY(), 0, 0, 0, 174, this.height, this.width, 16);
-        }
-        poseStack.popPose();
+        // TODO(26.1 port, 07): 1.21.1 pushed the side bar behind the rest of the screen; 26.1 layers by draw order,
+        // so it now covers whatever the screen drew before it. Check it in the client checklist
+        guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
+                EDITOR_SIDE_BAR_TEXTURE,
+                this.getX(),
+                this.getY(),
+                0,
+                0,
+                174,
+                this.height,
+                this.width,
+                16);
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
     }
 }

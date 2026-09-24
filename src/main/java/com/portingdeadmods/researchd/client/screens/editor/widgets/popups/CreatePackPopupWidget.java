@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -51,14 +52,9 @@ public class CreatePackPopupWidget extends PopupWidget {
             this.nameEditBox = contents.addChild(new EditBox(GuiUtils.getFont(), 128, 16, Component.empty()));
             this.nameEditBox.setHint(Component.literal("<Pack Name>"));
             this.nameEditBox.setResponder(val -> this.onNameChanged(this.nameEditBox, val));
-            this.descEditBox = contents.addChild(new MultiLineEditBox(
-                    GuiUtils.getFont(),
-                    0,
-                    0,
-                    128,
-                    80,
-                    Component.literal("<Pack Description>"),
-                    Component.literal("msg")));
+            this.descEditBox = contents.addChild(MultiLineEditBox.builder()
+                    .setPlaceholder(Component.literal("<Pack Description>"))
+                    .build(GuiUtils.getFont(), 128, 80, Component.literal("msg")));
             // this.descEditBox.setValueListener(val -> this.onValueChanged(this.descEditBox, val));
             this.checkbox =
                     contents.addChild(Checkbox.builder(Component.literal("Generate Examples"), GuiUtils.getFont())
@@ -119,9 +115,9 @@ public class CreatePackPopupWidget extends PopupWidget {
     @Override
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
-        guiGraphics.blitSprite(SPRITE, this.getX(), this.getY(), this.width, this.height);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITE, this.getX(), this.getY(), this.width, this.height);
     }
 
     @Override

@@ -12,6 +12,8 @@ import com.portingdeadmods.researchd.utils.SpaghettiClient;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -43,6 +45,7 @@ public class EmbeddedEffectCreationWidget extends AbstractWidget {
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 EditorSharedSprites.EDITOR_BACKGROUND_INVERTED_SPRITE,
                 this.getX(),
                 this.getY(),
@@ -62,7 +65,8 @@ public class EmbeddedEffectCreationWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        int button = event.button();
         if (this.isHovered() && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (this.parentPopupWidget != null) {
                 SpaghettiClient.tryGetResearchScreen().closePopup(this.parentPopupWidget);
@@ -70,7 +74,7 @@ public class EmbeddedEffectCreationWidget extends AbstractWidget {
             this.effectTypePopupWidget = SpaghettiClient.tryGetResearchScreen()
                     .openPopupCentered(new ResearchEffectTypeSelectionPopupWidget(this.parentPopupWidget, this));
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override

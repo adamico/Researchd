@@ -28,6 +28,8 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -114,9 +116,9 @@ public class ResearchEffectTypeSelectionPopupWidget extends PopupWidget {
     @Override
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(BACKGROUND_SPRITE, this.getX(), this.getY(), 148, 160);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, this.getX(), this.getY(), 148, 160);
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -184,8 +186,8 @@ public class ResearchEffectTypeSelectionPopupWidget extends PopupWidget {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            boolean clicked = super.mouseClicked(mouseX, mouseY, button);
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            boolean clicked = super.mouseClicked(event, doubleClick);
             if (this.hoveredItem == null && this.isHovered()) {
                 ResearchEffectTypeSelectionPopupWidget.this.selectedResearchEffect = null;
                 ResearchEffectTypeSelectionPopupWidget.this.doneButton.active = false;
@@ -255,6 +257,7 @@ public class ResearchEffectTypeSelectionPopupWidget extends PopupWidget {
                 int mouseX,
                 int mouseY) {
             guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
                     SPRITES.get(
                             true,
                             this.isItemHovered(xIndex, yIndex, mouseX, mouseY)
@@ -269,7 +272,12 @@ public class ResearchEffectTypeSelectionPopupWidget extends PopupWidget {
             Component name = pair.right();
             icon.render(guiGraphics, left + 1, top + 1, mouseX, mouseY, 1, 14, 14, 1);
             guiGraphics.drawScrollingString(
-                    GuiUtils.getFont(), name, left + 18 + 1, left + this.getItemWidth() - 1, top + 4, -1);
+                    guiGraphics.textRenderer(),
+                    GuiUtils.getFont(),
+                    name,
+                    left + 18 + 1,
+                    left + this.getItemWidth() - 1,
+                    top + 4);
         }
     }
 }
