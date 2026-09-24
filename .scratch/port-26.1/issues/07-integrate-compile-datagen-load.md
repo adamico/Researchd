@@ -9,8 +9,8 @@
 - [x] Full compile with no errors. `compileJava` is clean. The 1.21.1 `LabEnergyDrawTests` is excluded from the gametest source set until 08 (`TODO(26.1 port, 08)` in `build.gradle`).
 - [x] Datagen regenerated, including the 26.1 item model definitions. The output is **not committed**: `src/generated` is in upstream's `.gitignore`, and CI runs `runData` before `build`.
 - [x] The dedicated server starts with no Researchd errors in the log
-- [ ] The client starts, a world with the default Researchd datapack loads, and the research screen opens. Done by an agent: the client reached the title screen and joined a world with no errors. Still manual: open the research screen.
-- [ ] Manual: the Research Lab forms, accepts Research Packs through a Lab Part, and completes a research
+- [ ] The client starts, a world with the default Researchd datapack loads, and the research screen opens. The client, the research screen and a world with the dev test datapack were checked on 2026-09-24. Not yet checked: a world with the default `example_researches` pack enabled.
+- [x] Manual: the Research Lab forms, accepts Research Packs through a Lab Part, and completes a research (2026-09-24, dev test datapack, draw at 0)
 - [ ] Manual: team create, join and leave work with native teams
 - [x] Anything noted by 03–06 (see the Notes in 03) is either fixed or filed as a follow-up ticket
 
