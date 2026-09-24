@@ -22,7 +22,7 @@ public interface ResearchPack {
             .dispatch(ResearchPack::getSerializer, ResearchPackSerializer::codec);
 
     StreamCodec<RegistryFriendlyByteBuf, ResearchPack> STREAM_CODEC =
-            ByteBufCodecs.fromCodecTrusted(CODEC).cast();
+            ByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
 
     int color();
 

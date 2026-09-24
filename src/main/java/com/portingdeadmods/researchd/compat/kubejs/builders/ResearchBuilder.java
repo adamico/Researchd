@@ -55,7 +55,7 @@ public class ResearchBuilder {
     }
 
     public ResearchBuilder iconPack(Identifier key) {
-        this.icon = new ItemResearchIcon(List.of(ResearchdResearchPackProvider.asStack(key)));
+        this.icon = new ItemResearchIcon(List.of(ResearchdResearchPackProvider.asTemplate(key)));
         return this;
     }
 

@@ -9,7 +9,6 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 
@@ -26,8 +25,7 @@ public class ResearchdRecipes implements ResearchdRecipeProvider {
         ShapedRecipeBuilder.shaped(
                         BuiltInRegistries.ITEM,
                         RecipeCategory.MISC,
-                        ItemStackTemplate.fromNonEmptyStack(
-                                ResearchdResearchPackProvider.asStack(ResearchdResearchPacks.OVERWORLD_PACK_LOC)))
+                        ResearchdResearchPackProvider.asTemplate(ResearchdResearchPacks.OVERWORLD_PACK_LOC))
                 .pattern(" A ")
                 .pattern("BGC")
                 .pattern(" D ")
@@ -42,8 +40,7 @@ public class ResearchdRecipes implements ResearchdRecipeProvider {
         ShapedRecipeBuilder.shaped(
                         BuiltInRegistries.ITEM,
                         RecipeCategory.MISC,
-                        ItemStackTemplate.fromNonEmptyStack(
-                                ResearchdResearchPackProvider.asStack(ResearchdResearchPacks.NETHER_PACK_LOC)))
+                        ResearchdResearchPackProvider.asTemplate(ResearchdResearchPacks.NETHER_PACK_LOC))
                 .pattern(" A ")
                 .pattern("BGC")
                 .pattern(" D ")
@@ -58,8 +55,7 @@ public class ResearchdRecipes implements ResearchdRecipeProvider {
         ShapedRecipeBuilder.shaped(
                         BuiltInRegistries.ITEM,
                         RecipeCategory.MISC,
-                        ItemStackTemplate.fromNonEmptyStack(
-                                ResearchdResearchPackProvider.asStack(ResearchdResearchPacks.END_PACK_LOC)))
+                        ResearchdResearchPackProvider.asTemplate(ResearchdResearchPacks.END_PACK_LOC))
                 .pattern(" A ")
                 .pattern("BGC")
                 .pattern(" D ")

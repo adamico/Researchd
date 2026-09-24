@@ -23,8 +23,8 @@ public class SuggestionRegistryVerifyEditBox extends RegistryVerifyEditBox {
     public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
-        // TODO(26.1 port, 07): 26.1 GUI layering follows draw order, so the drop-down no longer sits above
-        // widgets drawn after it; check it in the client checklist
+        // TODO(26.1 port, 19): 26.1 GUI layering follows draw order, so the drop-down no longer sits above
+        // widgets drawn after it; checked in the client visual parity pass
         this.dropDown.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 

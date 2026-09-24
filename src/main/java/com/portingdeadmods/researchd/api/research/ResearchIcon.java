@@ -25,7 +25,7 @@ public interface ResearchIcon {
             .byNameCodec()
             .dispatch(ResearchIcon::getSerializer, ResearchIconSerializer::codec);
     StreamCodec<RegistryFriendlyByteBuf, ResearchIcon> STREAM_CODEC =
-            ByteBufCodecs.fromCodecTrusted(CODEC).cast();
+            ByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
 
     /**
      * @return The id of this type of Research Icon.

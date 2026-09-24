@@ -265,7 +265,8 @@ public class ResearchLabControllerBE extends GhostMultiblockControllerBE impleme
         input.read("research_pack_usage", PACK_USAGE_CODEC).ifPresent(this.researchPackUsage::putAll);
         super.loadAdditional(input);
 
-        // PDL 1.1.15 saves the handler exposure as "handler_exposures" but loads "handler_exposure", so without
+        // TODO(26.1 port, 20): PDL 1.1.15 saves the handler exposure as "handler_exposures" but loads
+        // "handler_exposure", so without
         // this the Lab Parts expose nothing after a reload. Remove once PDL reads the key it writes.
         input.listOrEmpty("handler_exposures", HANDLER_EXPOSURE_CODEC)
                 .forEach(exposure -> this.exposedHandlers.put(exposure.getFirst(), exposure.getSecond()));

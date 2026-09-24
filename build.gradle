@@ -69,6 +69,12 @@ sourceSets {
     }
 }
 
+// TODO(26.1 port, 08): the 1.21.1 GameTests don't compile on 26.1. Every run compiles this
+// source set, so they stay out until 08 rewrites them as 26.1 test instances.
+sourceSets.gametest.java {
+    exclude 'com/portingdeadmods/researchd/gametest/LabEnergyDrawTests.java'
+}
+
 neoForge {
     version = project.neo_version
 

@@ -44,7 +44,8 @@ public record ItemResearchIcon(List<ItemStackTemplate> items) implements Researc
         return ofStacks(Collections.singletonList(stack));
     }
 
+    // No ItemStack here: the default datapack is built before item components are bound
     public static ItemResearchIcon single(ItemLike item) {
-        return single(new ItemStack(item));
+        return new ItemResearchIcon(List.of(new ItemStackTemplate(item.asItem())));
     }
 }

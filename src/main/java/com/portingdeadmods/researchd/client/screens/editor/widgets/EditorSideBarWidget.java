@@ -42,8 +42,8 @@ public class EditorSideBarWidget extends AbstractLayoutWidget<LinearLayout> {
     @Override
     protected void extractWidgetRenderState(
             GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // TODO(26.1 port, 07): 1.21.1 pushed the side bar behind the rest of the screen; 26.1 layers by draw order,
-        // so it now covers whatever the screen drew before it. Check it in the client checklist
+        // TODO(26.1 port, 19): 1.21.1 pushed the side bar behind the rest of the screen; 26.1 layers by draw order,
+        // so it now covers whatever the screen drew before it. Checked in the client visual parity pass
         guiGraphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 EDITOR_SIDE_BAR_TEXTURE,

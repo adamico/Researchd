@@ -12,6 +12,7 @@ import com.portingdeadmods.researchd.data.components.ResearchPackComponent;
 import com.portingdeadmods.researchd.impl.utils.DisplayImpl;
 import com.portingdeadmods.researchd.registries.ResearchdItems;
 import java.util.Optional;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -20,6 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public record ResearchPackImpl(int color, int sortingValue, Optional<Identifier> customTexture, DisplayImpl display)
         implements ResearchPack, RegistryDisplay<ResearchPack> {
@@ -45,9 +47,16 @@ public record ResearchPackImpl(int color, int sortingValue, Optional<Identifier>
     }
 
     public static ItemStack asStack(ResourceKey<ResearchPack> key) {
-        ItemStack stack = ResearchdItems.RESEARCH_PACK.toStack();
-        stack.set(ResearchdDataComponents.RESEARCH_PACK, new ResearchPackComponent(Optional.of(key)));
-        return stack;
+        return asTemplate(key).create();
+    }
+
+    // Safe before item components are bound, unlike asStack; the default datapack is built that early
+    public static ItemStackTemplate asTemplate(ResourceKey<ResearchPack> key) {
+        return new ItemStackTemplate(
+                ResearchdItems.RESEARCH_PACK.get(),
+                DataComponentPatch.builder()
+                        .set(ResearchdDataComponents.RESEARCH_PACK.get(), new ResearchPackComponent(Optional.of(key)))
+                        .build());
     }
 
     public static Builder builder() {

@@ -24,8 +24,7 @@ public interface Research {
     Codec<Research> CODEC = ResearchdRegistries.RESEARCH_SERIALIZER
             .byNameCodec()
             .dispatch(Research::getSerializer, ResearchSerializer::codec);
-    StreamCodec<RegistryFriendlyByteBuf, Research> STREAM_CODEC =
-            ByteBufCodecs.fromCodecTrusted(CODEC).cast();
+    StreamCodec<RegistryFriendlyByteBuf, Research> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
     Codec<ResourceKey<Research>> RESOURCE_KEY_CODEC = ResourceKey.codec(ResearchdRegistries.RESEARCH_KEY);
     StreamCodec<ByteBuf, ResourceKey<Research>> RESOURCE_KEY_STREAM_CODEC =
             ResourceKey.streamCodec(ResearchdRegistries.RESEARCH_KEY);

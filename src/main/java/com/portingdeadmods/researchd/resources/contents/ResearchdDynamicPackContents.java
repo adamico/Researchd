@@ -47,7 +47,9 @@ public class ResearchdDynamicPackContents {
         for (Map.Entry<Identifier, Recipe<?>> entry : provider.getContents().entrySet()) {
             Recipe<?> recipe = entry.getValue();
             DataResult<JsonElement> result = codec.encodeStart(JsonOps.INSTANCE, recipe);
-            result.ifSuccess(json -> pack.put(entry.getKey().withPrefix(path + "/"), json));
+            result.ifSuccess(json -> pack.put(entry.getKey().withPrefix(path + "/"), json))
+                    .ifError(error -> Researchd.LOGGER.error(
+                            "Failed to encode default {} {}: {}", path, entry.getKey(), error.message()));
         }
     }
 
@@ -59,7 +61,9 @@ public class ResearchdDynamicPackContents {
         for (Map.Entry<ResourceKey<T>, T> entry : provider.contents().entrySet()) {
             T research = entry.getValue();
             DataResult<JsonElement> result = codec.encodeStart(JsonOps.INSTANCE, research);
-            result.ifSuccess(json -> pack.put(entry.getKey().identifier().withPrefix("researchd/" + path + "/"), json));
+            result.ifSuccess(json -> pack.put(entry.getKey().identifier().withPrefix("researchd/" + path + "/"), json))
+                    .ifError(error -> Researchd.LOGGER.error(
+                            "Failed to encode default {} {}: {}", path, entry.getKey(), error.message()));
         }
     }
 }
