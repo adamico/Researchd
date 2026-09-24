@@ -51,7 +51,7 @@ public final class ResearchdServerTickHandler {
 
                         if (currentProgress.isComplete()) {
                             // Research Complete Logic
-                            long completionTime = server.overworld().getDayTime() * 50L;
+                            long completionTime = server.overworld().getOverworldClockTime() * 50L;
                             team.setResearchCompleted(currentResearch, completionTime);
                             team.onCompleteResearch(currentResearch, completionTime, server.getPlayerList()::getPlayer);
 

@@ -51,10 +51,10 @@ public final class ResearchCommands {
                 .listElementIds();
 
         researches.forEach(r -> {
-            team.setResearchCompleted(r, level.getDayTime() * 50);
+            team.setResearchCompleted(r, level.getOverworldClockTime() * 50);
             team.onCompleteResearch(
                     r,
-                    level.getDayTime() * 50,
+                    level.getOverworldClockTime() * 50,
                     id -> id.equals(source.getPlayer().getUUID()) ? source.getPlayer() : null);
         });
 
@@ -73,10 +73,10 @@ public final class ResearchCommands {
                 result.unwrap().map(List::of, o -> o.stream().toList());
 
         for (Holder<Research> research : researches) {
-            team.setResearchCompleted(research.getKey(), level.getDayTime() * 50);
+            team.setResearchCompleted(research.getKey(), level.getOverworldClockTime() * 50);
             team.onCompleteResearch(
                     research.getKey(),
-                    level.getDayTime() * 50,
+                    level.getOverworldClockTime() * 50,
                     true,
                     id -> id.equals(source.getPlayer().getUUID()) ? source.getPlayer() : null);
         }

@@ -58,11 +58,10 @@ public final class RecipeFilterContext {
      * blocked, or its result / any of its ingredients is a blocked item.
      */
     public static boolean isBlocked(RecipeHolder<?> holder, Frame frame) {
-        Level level = frame.level();
-        if (ResearchdApi.isRecipeBlocked(level, frame.teamId(), holder)) return true;
-
-        // TODO(26.1 port, 09/10): the "result or any ingredient is a Locked item" half of this rule needs
-        // the 26.1 recipe API (recipe displays and placement info). Until then only Locked recipe ids count.
+        // TODO(26.1 port, 09/10): recipe locking is switched off until it is rewritten for 26.1 recipes, so
+        // nothing is Locked. Restore the rule: the recipe id is Locked
+        // (ResearchdApi.isRecipeBlocked(frame.level(), frame.teamId(), holder)), or its result or any
+        // ingredient is a Locked item.
         return false;
     }
 

@@ -1,11 +1,9 @@
 package com.portingdeadmods.researchd;
 
 import com.mojang.logging.LogUtils;
-import com.portingdeadmods.portingdeadlibs.api.capabilities.SidedEnergyStorage;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfig;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigManager;
-import com.portingdeadmods.portingdeadlibs.api.misc.IOAction;
 import com.portingdeadmods.portingdeadlibs.api.resources.DynamicPack;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.data.ResearchdAttachments;
@@ -29,10 +27,11 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.LimitingEnergyHandler;
 import org.slf4j.Logger;
 
 @Mod(Researchd.MODID)
@@ -114,7 +113,8 @@ public final class Researchd {
 
     /**
      * Copies loaded config values into the {@code @ConfigValue} fields. PDL 1.1.8 only does this for configs
-     * owned by PDL itself: its listener sits on PDL's mod bus, while our config events fire on ours.
+     * owned by PDL itself (still true in 1.1.15): its listener sits on PDL's mod bus, while our config events fire
+     * on ours.
      */
     private static void onConfigLoaded(ModConfigEvent event) {
         PDLConfig config = PDLConfigManager.CONFIGS.get(event.getConfig().getSpec());
@@ -153,14 +153,15 @@ public final class Researchd {
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        // Only the Lab Parts the shape exposes answer, on every side; the Lab Controller exposes nothing
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 ResearchdBlockEntityTypes.RESEARCH_LAB_PART.get(),
                 (be, dir) -> be.getControllerItemHandler());
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK, ResearchdBlockEntityTypes.RESEARCH_LAB_PART.get(), (be, dir) -> {
-                    IEnergyStorage storage = be.getControllerEnergyStorage();
-                    return storage != null ? new SidedEnergyStorage(storage, IOAction.INSERT) : null;
+                Capabilities.Energy.BLOCK, ResearchdBlockEntityTypes.RESEARCH_LAB_PART.get(), (be, dir) -> {
+                    EnergyHandler energy = be.getControllerEnergyStorage();
+                    return energy != null ? new LimitingEnergyHandler(energy, Integer.MAX_VALUE, 0) : null;
                 });
     }
 

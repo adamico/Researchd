@@ -37,7 +37,7 @@ public record RequestToJoinPayload(UUID toJoin, boolean remove) implements Custo
     public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer sp) {
-                        MinecraftServer server = sp.getServer();
+                        MinecraftServer server = sp.level().getServer();
                         ServerLevel level = server.overworld();
                         Player teamMemberPlayer = level.getPlayerByUUID(this.toJoin());
                         if (teamMemberPlayer != null) {

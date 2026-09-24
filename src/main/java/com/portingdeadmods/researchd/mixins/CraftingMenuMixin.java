@@ -17,6 +17,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 
+// TODO(26.1 port, 09): not in researchd.mixins.json; recipe locking is switched off
+// until that ticket rewrites and re-enables this hook.
 @Mixin(CraftingMenu.class)
 public abstract class CraftingMenuMixin {
 

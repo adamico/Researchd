@@ -12,8 +12,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-;
 
+// TODO(26.1 port, 10): not in researchd.mixins.json; recipe locking is switched off
+// until that ticket rewrites and re-enables this hook.
 @Mixin(targets = "net/minecraft/world/level/chunk/LevelChunk$BoundTickingBlockEntity")
 public abstract class BoundTickingBlockEntityMixin {
 

@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// TODO(26.1 port, 09): not in researchd.mixins.json; recipe locking is switched off
+// until that ticket rewrites and re-enables this hook.
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin {
 

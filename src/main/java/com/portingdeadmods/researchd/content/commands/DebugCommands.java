@@ -20,7 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class DebugCommands {
     public static LiteralCommandNode<CommandSourceStack> build() {
         return Commands.literal("debug")
-                .requires(p -> p.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("teams-dump").executes(context -> {
                     CommandSourceStack source = context.getSource();
                     source.sendSystemMessage(ResearchTeamHelperServer.getFormattedDump(source.getLevel()));
