@@ -137,6 +137,8 @@ dependencies {
     //implementation files("pdl_cicd/portingdeadlibs-${pdl_version}-1.21.1.jar") // Local Deploy
 
     // Integration dependencies are out for now; see the source set excludes above.
+    // JEI runs in the dev client without Researchd's compat, which comes back in 14.
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
 def parts = pdl_version.tokenize('.')
