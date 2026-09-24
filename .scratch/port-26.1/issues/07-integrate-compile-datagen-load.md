@@ -49,4 +49,4 @@
   - **Edited research never progressed:** a team's saved progress kept the research method from its first save. Fixed by porting upstream's `ResearchProgress.rebindTo` (a0e16a6). Skip that commit in the upstream rebase.
   - **Disconnect when a research completes:** sync payloads held the live team, and the server changed the queue while the network thread was encoding it (`ConcurrentModificationException`). `PayloadSnapshots` copies the state when the payload is built (bb10822). The same race exists on 1.21.1, so it's a candidate for an upstream PR.
   - **Dev config:** `run/config/researchd-common.toml` had `research_lab_energy_usage = 20` left from energy testing. It's set to 0 now, since there's no FE source in the dev client.
-  - **1.21.1 team data isn't read:** see ticket 21.
+  - **1.21.1 team data isn't read:** 26.1 saves it under `dimensions/minecraft/overworld/data/researchd/`, so an upgraded world starts with no teams. That is intended: ADR 0002 says the 26.1 line doesn't migrate 1.21.1 worlds, so no ticket.
