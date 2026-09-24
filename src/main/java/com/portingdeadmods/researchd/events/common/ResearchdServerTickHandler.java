@@ -45,7 +45,7 @@ public final class ResearchdServerTickHandler {
                                 ServerPlayer player = server.getPlayerList().getPlayer(member.player());
                                 if (player == null) continue; // skip offline members
                                 PacketDistributor.sendToPlayer(
-                                        player, new ResearchProgressSyncPayload(currentResearch, currentProgress));
+                                        player, ResearchProgressSyncPayload.snapshot(currentResearch, currentProgress));
                             }
                         }
 

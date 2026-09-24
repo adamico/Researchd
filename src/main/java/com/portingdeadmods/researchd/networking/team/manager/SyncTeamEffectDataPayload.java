@@ -3,6 +3,7 @@ package com.portingdeadmods.researchd.networking.team.manager;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.client.cache.ResearchTeamCache;
 import com.portingdeadmods.researchd.impl.TeamResearchEffectDataMap;
+import com.portingdeadmods.researchd.networking.PayloadSnapshots;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,6 +16,11 @@ public record SyncTeamEffectDataPayload(TeamResearchEffectDataMap map) implement
             new Type<>(Researchd.rl("sync_team_research_effect_data"));
     public static final StreamCodec<? super RegistryFriendlyByteBuf, SyncTeamEffectDataPayload> STREAM_CODEC =
             TeamResearchEffectDataMap.STREAM_CODEC.map(SyncTeamEffectDataPayload::new, SyncTeamEffectDataPayload::map);
+
+    /** Builds the payload from a copy of the live map; see {@link PayloadSnapshots}. */
+    public static SyncTeamEffectDataPayload snapshot(TeamResearchEffectDataMap map) {
+        return new SyncTeamEffectDataPayload(PayloadSnapshots.copy(TeamResearchEffectDataMap.STREAM_CODEC, map));
+    }
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

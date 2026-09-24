@@ -5,6 +5,7 @@ import com.portingdeadmods.researchd.ResearchdRegistries;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.api.team.ResearchTeam;
 import com.portingdeadmods.researchd.impl.ResearchProgress;
+import com.portingdeadmods.researchd.networking.PayloadSnapshots;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -23,6 +24,11 @@ public record ResearchProgressSyncPayload(ResourceKey<Research> key, ResearchPro
                     ResearchProgress.STREAM_CODEC,
                     ResearchProgressSyncPayload::progress,
                     ResearchProgressSyncPayload::new);
+
+    /** Builds the payload from a copy of the live progress; see {@link PayloadSnapshots}. */
+    public static ResearchProgressSyncPayload snapshot(ResourceKey<Research> key, ResearchProgress progress) {
+        return new ResearchProgressSyncPayload(key, PayloadSnapshots.copy(ResearchProgress.STREAM_CODEC, progress));
+    }
 
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {

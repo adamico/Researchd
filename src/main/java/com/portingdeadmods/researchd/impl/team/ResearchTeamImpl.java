@@ -244,7 +244,7 @@ public class ResearchTeamImpl implements ResearchTeam, ValueEffectsHolder {
         for (TeamMember member : this.getMembers()) {
             Player memberPlayer = playerGetter.apply(member.player());
             if (memberPlayer instanceof ServerPlayer sp) {
-                PacketDistributor.sendToPlayer(sp, new SyncTeamPayload(this));
+                PacketDistributor.sendToPlayer(sp, SyncTeamPayload.snapshot(this));
             }
         }
 
@@ -296,7 +296,7 @@ public class ResearchTeamImpl implements ResearchTeam, ValueEffectsHolder {
         if (level == null || research == null) return;
 
         research.researchEffect().onLock(level, this, researchKey);
-        PacketDistributor.sendToAllPlayers(new SyncTeamPayload(this));
+        PacketDistributor.sendToAllPlayers(SyncTeamPayload.snapshot(this));
     }
 
     @Override

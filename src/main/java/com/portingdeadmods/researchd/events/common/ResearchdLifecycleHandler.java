@@ -81,16 +81,16 @@ public final class ResearchdLifecycleHandler {
     private static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ResearchTeamMap map = TeamSavedData.getData(player.level());
-            PacketDistributor.sendToPlayer(player, new SyncTeamDataPayload(map));
+            PacketDistributor.sendToPlayer(player, SyncTeamDataPayload.snapshot(map));
             PacketDistributor.sendToPlayer(
-                    player, new SyncTeamEffectDataPayload(TeamResearchEffectSavedData.getData(player.level())));
+                    player, SyncTeamEffectDataPayload.snapshot(TeamResearchEffectSavedData.getData(player.level())));
 
             // Create default team if player isn't in a team
             if (map.getTeamByPlayer(player) == null) {
                 ResearchTeamImpl newTeam = (ResearchTeamImpl) map.createDefaultTeam(player);
                 map.addTeam(newTeam);
 
-                PacketDistributor.sendToAllPlayers(new AddTeamPayload(newTeam));
+                PacketDistributor.sendToAllPlayers(AddTeamPayload.snapshot(newTeam));
             }
         }
     }
