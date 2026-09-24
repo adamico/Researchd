@@ -237,6 +237,22 @@ public class ResearchLabControllerBE extends GhostMultiblockControllerBE impleme
         progress.checkProgress(current, this.level, new ResearchMethod.SimpleMethodContext(team, this));
     }
 
+    // TODO(26.1 port, 20): PDL 1.1.15's PDLBlockEntity#dropItems does nothing, where PDL's 1.21.1 ContainerBlock
+    // dropped the item handler's contents, so a broken Lab would lose its Research Packs
+    @Override
+    protected void dropItems() {
+        if (this.level == null || this.level.isClientSide()) return;
+
+        for (int i = 0; i < this.itemHandler.size(); i++) {
+            ItemResource resource = this.itemHandler.getResource(i);
+            if (resource.isEmpty()) continue;
+
+            Block.popResource(this.level, this.getBlockPos(), resource.toStack(this.itemHandler.getAmountAsInt(i)));
+        }
+        this.orphanedStacks.forEach(stack -> Block.popResource(this.level, this.getBlockPos(), stack));
+        this.orphanedStacks.clear();
+    }
+
     // TODO(26.1 port, 20): PDL 1.1.15's GhostMultiblockController removes the parts in affectNeighborsAfterRemoval,
     // which 26.1 calls after this block entity is gone, so it never finds them. They're removed here instead
     @Override
