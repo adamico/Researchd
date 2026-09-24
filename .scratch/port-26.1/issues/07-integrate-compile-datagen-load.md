@@ -43,3 +43,10 @@
   - **Creative tab:** the Researchd tab is on page 2 of the creative inventory (26.1 has 14 vanilla tabs). It holds the Research Lab and the 3 Research Packs.
   - **JEI:** it runs in the dev client (`localRuntime`), without Researchd's compat (14).
   - **Test datapack:** `.scratch/port-26.1/dev-datapacks/researchd-lab-test` adds a research pack, `researchd:lab_test_pack` (`data/researchd/researchd/research_pack/`), and a root research, `researchd:lab_test`, that consumes 3 of those packs at 20 ticks each. It's copied into `run/saves/*/datapacks` and `run/port26-smoke/datapacks`. The default packs (overworld/nether/end) come from the `researchd:example_researches` feature pack, which new worlds leave disabled. The research method id is `researchd:consume_research_pack`.
+- **Found in the manual client test (2026-09-24):**
+  - **Lab screen size:** PDL's container screen blitted the 256x256 background with the screen size as the texture size (404d274). It's the fourth PDL bug in ticket 20.
+  - **Start button did nothing:** 26.1's `ContainerEventHandler#mouseClicked` gives a click only to the first child under the mouse, with no fall-through. `ClickDispatch` restores the 1.21.1 dispatch in the research and team screens (978489e).
+  - **Edited research never progressed:** a team's saved progress kept the research method from its first save. Fixed by porting upstream's `ResearchProgress.rebindTo` (a0e16a6). Skip that commit in the upstream rebase.
+  - **Disconnect when a research completes:** sync payloads held the live team, and the server changed the queue while the network thread was encoding it (`ConcurrentModificationException`). `PayloadSnapshots` copies the state when the payload is built (bb10822). The same race exists on 1.21.1, so it's a candidate for an upstream PR.
+  - **Dev config:** `run/config/researchd-common.toml` had `research_lab_energy_usage = 20` left from energy testing. It's set to 0 now, since there's no FE source in the dev client.
+  - **1.21.1 team data isn't read:** see ticket 21.
