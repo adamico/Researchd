@@ -28,6 +28,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMenu> {
     public static final Identifier BACKGROUND_TEXTURE = Researchd.rl("textures/gui/research_lab.png");
+    public static final int BACKGROUND_TEXTURE_SIZE = 256;
     public static final Identifier RESEARCH_PACK_TEXTURE = Researchd.rl("textures/item/research_pack_empty.png");
     public static final Identifier SLOT_SPRITE = Researchd.rl("slot_with_progress");
     public static final int PROGRESS_COLOR = ARGB.color(0, 225, 100);
@@ -117,7 +118,19 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
 
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
+        // TODO(26.1 port, 20): PDL 1.1.15's PDLAbstractContainerScreen blits the background with the image size as
+        // the texture size, squeezing the whole 256x256 sheet into the screen, so it's blitted here instead
+        guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
+                BACKGROUND_TEXTURE,
+                this.leftPos,
+                this.topPos,
+                0,
+                0,
+                this.imageWidth,
+                this.imageHeight,
+                BACKGROUND_TEXTURE_SIZE,
+                BACKGROUND_TEXTURE_SIZE);
         //
         //        this.botPos = this.topPos + getYSize();
         //        this.rightPos = this.leftPos + getXSize();
