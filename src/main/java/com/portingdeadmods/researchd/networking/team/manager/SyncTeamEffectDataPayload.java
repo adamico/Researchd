@@ -11,11 +11,22 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record SyncTeamEffectDataPayload(TeamResearchEffectDataMap map) implements CustomPacketPayload {
+public final class SyncTeamEffectDataPayload implements CustomPacketPayload {
     public static final Type<SyncTeamEffectDataPayload> TYPE =
             new Type<>(Researchd.rl("sync_team_research_effect_data"));
     public static final StreamCodec<? super RegistryFriendlyByteBuf, SyncTeamEffectDataPayload> STREAM_CODEC =
             TeamResearchEffectDataMap.STREAM_CODEC.map(SyncTeamEffectDataPayload::new, SyncTeamEffectDataPayload::map);
+
+    private final TeamResearchEffectDataMap map;
+
+    // Built only through snapshot(...), so no caller can hand the network thread live state
+    private SyncTeamEffectDataPayload(TeamResearchEffectDataMap map) {
+        this.map = map;
+    }
+
+    public TeamResearchEffectDataMap map() {
+        return this.map;
+    }
 
     /** Builds the payload from a copy of the live map; see {@link PayloadSnapshots}. */
     public static SyncTeamEffectDataPayload snapshot(TeamResearchEffectDataMap map) {

@@ -10,10 +10,21 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record AddTeamPayload(ResearchTeamImpl team) implements CustomPacketPayload {
+public final class AddTeamPayload implements CustomPacketPayload {
     public static final Type<AddTeamPayload> TYPE = new Type<>(Researchd.rl("add_team"));
     public static final StreamCodec<? super RegistryFriendlyByteBuf, AddTeamPayload> STREAM_CODEC =
             ResearchTeamImpl.STREAM_CODEC.map(AddTeamPayload::new, AddTeamPayload::team);
+
+    private final ResearchTeamImpl team;
+
+    // Built only through snapshot(...), so no caller can hand the network thread live state
+    private AddTeamPayload(ResearchTeamImpl team) {
+        this.team = team;
+    }
+
+    public ResearchTeamImpl team() {
+        return this.team;
+    }
 
     /** Builds the payload from a copy of the live team; see {@link PayloadSnapshots}. */
     public static AddTeamPayload snapshot(ResearchTeamImpl team) {

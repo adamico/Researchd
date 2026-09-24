@@ -7,6 +7,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 public final class ClickDispatch {
     private ClickDispatch() {}
 
+    // TODO(26.1 port, 19): part of the GUI parity pass; drop it if the screens stop nesting buttons inside widgets
     /**
      * 26.1's {@link ContainerEventHandler#mouseClicked} only offers a click to the first child under the mouse. The
      * Researchd screens put buttons inside bigger widgets that come first, so this offers the click to each child in
