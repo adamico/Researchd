@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.portingdeadmods.portingdeadlibs.api.data.transfer.PDLItemStacksHandler;
 import com.portingdeadmods.portingdeadlibs.api.data.transfer.PDLSimpleEnergyHandler;
 import com.portingdeadmods.portingdeadlibs.api.ghost.GhostMultiblockControllerBE;
+import com.portingdeadmods.portingdeadlibs.api.ghost.SimpleGhostMultiblockPartBE;
 import com.portingdeadmods.portingdeadlibs.api.gui.menus.PDLAbstractContainerMenu;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.ResearchdConfig;
@@ -34,6 +35,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -233,6 +235,21 @@ public class ResearchLabControllerBE extends GhostMultiblockControllerBE impleme
         if (progress == null) return;
 
         progress.checkProgress(current, this.level, new ResearchMethod.SimpleMethodContext(team, this));
+    }
+
+    // TODO(26.1 port, 20): PDL 1.1.15's GhostMultiblockController removes the parts in affectNeighborsAfterRemoval,
+    // which 26.1 calls after this block entity is gone, so it never finds them. They're removed here instead
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+
+        if (this.level instanceof ServerLevel serverLevel) {
+            for (BlockPos partPos : List.copyOf(this.getPartPositions())) {
+                if (serverLevel.getBlockEntity(partPos) instanceof SimpleGhostMultiblockPartBE) {
+                    serverLevel.removeBlock(partPos, false);
+                }
+            }
+        }
     }
 
     private void syncEnergyToClient() {
