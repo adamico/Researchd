@@ -8,6 +8,8 @@ import com.portingdeadmods.researchd.utils.GuiUtils;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -35,13 +37,19 @@ public class DimensionUnlockEffectWidget extends AbstractResearchInfoWidget<Dime
                 this.getX() + this.getSize().width,
                 this.getY() + this.getSize().height,
                 BACKGROUND_COLOR);
-        TextureAtlas atlas = (TextureAtlas)
-                Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS, null);
+        TextureAtlas atlas =
+                (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS);
         if (GuiUtils.spriteExists(atlas, this.dimensionIconSprite)) {
             guiGraphics.blitSprite(
-                    this.dimensionIconSprite, this.getX(), this.getY(), SPRITE_SIZE.width, SPRITE_SIZE.height);
+                    RenderPipelines.GUI_TEXTURED,
+                    this.dimensionIconSprite,
+                    this.getX(),
+                    this.getY(),
+                    SPRITE_SIZE.width,
+                    SPRITE_SIZE.height);
         } else {
             guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
                     DimensionUnlockEffect.DEFAULT_SPRITE,
                     this.getX(),
                     this.getY(),
@@ -62,12 +70,12 @@ public class DimensionUnlockEffectWidget extends AbstractResearchInfoWidget<Dime
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         return false;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         return false;
     }
 }

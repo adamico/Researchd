@@ -5,6 +5,8 @@ import java.util.Collection;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +94,13 @@ public abstract class ContainerWidget<E> extends AbstractWidget {
         }
         int x = this.getScrollerX(percentage);
         int y = this.getScrollerY(percentage);
-        guiGraphics.blitSprite(orientation.scrollerSprite, x, y, orientation.spriteWidth, orientation.spriteHeight);
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                orientation.scrollerSprite,
+                x,
+                y,
+                orientation.spriteWidth,
+                orientation.spriteHeight);
     }
 
     private int getMaxScrollDistance() {
@@ -153,7 +161,9 @@ public abstract class ContainerWidget<E> extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         if (this.isHovered() && !this.isScrollbarHovered((int) mouseX, (int) mouseY)) {
             int left = this.getLeft() + (this.hoveredXIndex * this.getItemWidth());
             int top = this.getTop() + (this.hoveredYIndex * this.getItemHeight());
@@ -161,7 +171,7 @@ public abstract class ContainerWidget<E> extends AbstractWidget {
                 this.clickedItem(
                         this.hoveredItem, this.hoveredXIndex, this.hoveredYIndex, left, top, (int) mouseX, (int)
                                 mouseY);
-                return super.mouseClicked(mouseX, mouseY, button);
+                return super.mouseClicked(event, doubleClick);
             }
         } else if (this.isHovered() && this.isScrollbarHovered((int) mouseX, (int) mouseY) && this.renderScroller) {
             int scrollableDistance = this.getMaxScrollDistance();
@@ -180,9 +190,9 @@ public abstract class ContainerWidget<E> extends AbstractWidget {
     }
 
     @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        if (this.isScrollbarHovered((int) mouseX, (int) mouseY)) {
-            this.mouseClicked(mouseX, mouseY, 0);
+    protected void onDrag(MouseButtonEvent event, double dragX, double dragY) {
+        if (this.isScrollbarHovered((int) event.x(), (int) event.y())) {
+            this.mouseClicked(event, false);
         }
     }
 

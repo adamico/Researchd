@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +41,7 @@ public class CheckItemPresenceResearchMethodWidget extends AbstractResearchInfoW
         Font font = Minecraft.getInstance().font;
         if (this.isHovered()) {
             Ingredient target = value.item();
-            ItemStack stack = new ItemStack(target.items()[0].getItem(), value.count());
+            ItemStack stack = new ItemStack(target.items().findFirst().orElseThrow(), value.count());
             List<Component> tooltip = new ArrayList<>(Screen.getTooltipFromItem(Minecraft.getInstance(), stack));
             tooltip.addFirst(Component.literal("Obtain ")
                     .withStyle(ChatFormatting.WHITE)
@@ -52,7 +53,7 @@ public class CheckItemPresenceResearchMethodWidget extends AbstractResearchInfoW
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY, int button) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
         if (this.isHovered()) {
             RecipeViewerHelper.openRecipesByResult(this.itemRenderer.getItem());
         }

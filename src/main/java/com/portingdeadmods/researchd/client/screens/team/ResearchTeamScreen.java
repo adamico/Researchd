@@ -22,7 +22,9 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.SpacerElement;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
@@ -203,35 +205,36 @@ public class ResearchTeamScreen extends BaseTeamScreen {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         if (!ResearchdCompatHandler.isFTBTeamsEnabled() && this.inviteWidget.isLazyHovered()) {
-            return this.inviteWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            return this.inviteWidget.mouseDragged(event, dragX, dragY);
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (!ResearchdCompatHandler.isFTBTeamsEnabled() && this.inviteWidget.isHovered()) {
-            return this.inviteWidget.mouseClicked(mouseX, mouseY, button);
+            return this.inviteWidget.mouseClicked(event, doubleClick);
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 SCREEN_TEXTURE,
                 leftPos,
                 topPos,
+                0,
+                0,
                 textureWidth,
                 textureHeight,
-                0,
-                0,
                 textureWidth,
                 textureHeight,
                 textureWidth,
@@ -240,10 +243,10 @@ public class ResearchTeamScreen extends BaseTeamScreen {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         updateHeaderButtonsActive();
     }
 
     @Override
-    protected void renderBlurredBackground(float partialTick) {}
+    protected void extractBlurredBackground(GuiGraphicsExtractor guiGraphics) {}
 }

@@ -1,7 +1,6 @@
 package com.portingdeadmods.researchd.client.screens.research.widgets;
 
 import com.portingdeadmods.portingdeadlibs.api.client.screens.widgets.AbstractScroller;
-import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.ResearchdClient;
 import com.portingdeadmods.researchd.ResearchdConfig;
@@ -15,6 +14,7 @@ import com.portingdeadmods.researchd.client.screens.lib.widgets.WidgetConstructo
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreen;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget;
 import com.portingdeadmods.researchd.translations.ResearchdTranslations;
+import com.portingdeadmods.researchd.utils.GuiUtils;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
@@ -24,6 +24,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -114,6 +116,7 @@ public class SelectedResearchWidget extends ResearchScreenWidget {
                 height);
         float percentage = (float) this.scrollOffset / (this.getInfoHeight() - 47f);
         guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 SMALL_SCROLLER_SPRITE,
                 getX() + getWidth() - 9,
                 (int) (getY() + PADDING_Y + (41 * percentage)),
@@ -127,7 +130,8 @@ public class SelectedResearchWidget extends ResearchScreenWidget {
             Font font = mc.font;
             int startY = 60;
 
-            guiGraphics.drawScrollingString(font, this.selectedInstance.getDisplayName(mc.level), 11, 169, 49, -1);
+            guiGraphics.drawScrollingString(
+                    guiGraphics.textRenderer(), font, this.selectedInstance.getDisplayName(mc.level), 11, 169, 49);
             renderResearchPanel(guiGraphics, this.selectedInstance, 12, 60, mouseX, mouseY, 2, false);
 
             int horizontalScrollerArea = this.sideScroller.visible ? 5 : 0;
@@ -238,13 +242,15 @@ public class SelectedResearchWidget extends ResearchScreenWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         if (this.effectWidget != null && this.effectWidget.isHovered()) {
-            return this.effectWidget.mouseClicked(mouseX, mouseY, button);
+            return this.effectWidget.mouseClicked(event, doubleClick);
         }
 
         if (this.methodWidget != null && this.methodWidget.isHovered()) {
-            return this.methodWidget.mouseClicked(mouseX, mouseY, button);
+            return this.methodWidget.mouseClicked(event, doubleClick);
         }
 
         int scrollerX = getX() + getWidth() - 9;
@@ -268,8 +274,8 @@ public class SelectedResearchWidget extends ResearchScreenWidget {
     }
 
     @Override
-    public void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        this.mouseClicked(mouseX, mouseY, 0);
+    public void onDrag(MouseButtonEvent event, double dragX, double dragY) {
+        this.mouseClicked(event, false);
     }
 
     public void setSelectedResearch(@Nullable ResourceKey<Research> research) {

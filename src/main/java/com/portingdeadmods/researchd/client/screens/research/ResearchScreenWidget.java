@@ -1,14 +1,14 @@
 package com.portingdeadmods.researchd.client.screens.research;
 
-import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.api.client.ClientResearchIcon;
 import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.api.research.ResearchStatus;
+import com.portingdeadmods.researchd.utils.GuiUtils;
 import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 
 public abstract class ResearchScreenWidget extends AbstractWidget {
@@ -61,13 +61,14 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
         int height = PANEL_HEIGHT;
         ResearchStatus status = instance.getResearchStatus();
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 status.getSpriteTexture(),
                 x,
                 y,
+                0,
+                0,
                 (int) (width * scale),
                 (int) (height * scale),
-                0,
-                0,
                 width,
                 height,
                 width,
@@ -81,8 +82,7 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
 
         if (isPanelHovered(guiGraphics, x, y, mouseX, mouseY, scale) && hoverable) {
             int color = -2130706433;
-            guiGraphics.fillGradient(
-                    RenderType.guiOverlay(), x, y, (int) (x + 20 * scale), (int) (y + 20 * scale), color, color, 0);
+            guiGraphics.fillGradient(x, y, (int) (x + 20 * scale), (int) (y + 20 * scale), color, color);
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class ResearchScreenWidget extends AbstractWidget {
 
         if (isPanelHovered(guiGraphics, x, y, mouseX, mouseY) && hoverable) {
             int color = -2130706433;
-            guiGraphics.fillGradient(RenderType.guiOverlay(), x, y, x + 20, y + 20, color, color, 0);
+            guiGraphics.fillGradient(x, y, x + 20, y + 20, color, color);
         }
     }
 

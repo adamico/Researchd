@@ -1,6 +1,5 @@
 package com.portingdeadmods.researchd.client.screens.research.widgets;
 
-import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.client.TechList;
 import com.portingdeadmods.researchd.api.research.Research;
@@ -10,6 +9,7 @@ import com.portingdeadmods.researchd.client.screens.research.ResearchScreen;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget;
 import com.portingdeadmods.researchd.networking.research.ResearchQueueAddPayload;
 import com.portingdeadmods.researchd.translations.ResearchdTranslations;
+import com.portingdeadmods.researchd.utils.GuiUtils;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -17,6 +17,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -91,9 +95,9 @@ public class TechListWidget extends ResearchScreenWidget {
 
         this.searchBox = new EditBox(font, x + 73 + 2, y + 3 + 4, 78, 14, Component.empty()) {
             @Override
-            public boolean charTyped(char codePoint, int modifiers) {
+            public boolean charTyped(CharacterEvent event) {
                 String searchValue = this.getValue();
-                boolean typed = super.charTyped(codePoint, modifiers);
+                boolean typed = super.charTyped(event);
                 String newValue = this.getValue();
                 if (!searchValue.equals(newValue)) {
                     refreshSearchResult();
@@ -102,9 +106,9 @@ public class TechListWidget extends ResearchScreenWidget {
             }
 
             @Override
-            public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            public boolean keyPressed(KeyEvent event) {
                 String searchValue = this.getValue();
-                boolean pressed = super.keyPressed(keyCode, scanCode, modifiers);
+                boolean pressed = super.keyPressed(event);
                 String newValue = this.getValue();
                 if (!searchValue.equals(newValue)) {
                     refreshSearchResult();
@@ -172,7 +176,7 @@ public class TechListWidget extends ResearchScreenWidget {
         if (selectedInstance != null) {
             if (queue.getQueue().add(selectedInstance)) {
                 UUID player = Minecraft.getInstance().player.getUUID();
-                long gameTime = Minecraft.getInstance().level.getDayTime();
+                long gameTime = Minecraft.getInstance().level.getOverworldClockTime();
 
                 selectedInstance.setResearchedPlayer(player);
                 selectedInstance.setResearchedTime(gameTime);
@@ -204,6 +208,7 @@ public class TechListWidget extends ResearchScreenWidget {
                 BACKGROUND_HEIGHT_SPRITE);
         int techListHeight = this.getTechListHeight();
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 TECH_LIST_EXPANDABLE,
                 getX(),
                 getY() + BACKGROUND_HEIGHT_SPRITE + 3,
@@ -264,6 +269,7 @@ public class TechListWidget extends ResearchScreenWidget {
 
         float percentage = (float) this.scrollOffset / (this.getContentHeight() - techListHeight);
         guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 SCROLLER_SPRITE,
                 this.scrollX,
                 (int) (getY() + PADDING_Y + (percentage * (techListHeight - SCROLLER_HEIGHT - 1))),
@@ -305,8 +311,18 @@ public class TechListWidget extends ResearchScreenWidget {
                 && this.getContentHeight() > this.getTechListHeight();
     }
 
+    // 26.1's AbstractWidget has no clicked(...) hook; restore the 1.21.1 click check
     @Override
-    protected boolean clicked(double mouseX, double mouseY) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.isValidClickButton(event.buttonInfo()) && this.clicked(event.x(), event.y())) {
+            this.playDownSound(Minecraft.getInstance().getSoundManager());
+            this.onClick(event, doubleClick);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean clicked(double mouseX, double mouseY) {
         return this.active
                 && this.visible
                 && mouseX >= getX()
@@ -317,7 +333,9 @@ public class TechListWidget extends ResearchScreenWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY, int button) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         if (this.hoveredResearch != null) {
             this.screen.showGraphForResearch(this.hoveredResearch.getResearch());
             this.screen.getSelectedResearchWidget().setSelectedResearch(this.hoveredResearch);
@@ -333,9 +351,11 @@ public class TechListWidget extends ResearchScreenWidget {
     }
 
     @Override
-    public void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+    public void onDrag(MouseButtonEvent event, double dragX, double dragY) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         if (this.canScroll(mouseX, mouseY)) {
-            this.onClick(mouseX, mouseY, 0);
+            this.onClick(event, false);
         }
     }
 

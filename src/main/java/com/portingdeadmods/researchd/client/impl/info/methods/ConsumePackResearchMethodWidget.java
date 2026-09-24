@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
@@ -75,7 +76,7 @@ public class ConsumePackResearchMethodWidget extends AbstractResearchInfoWidget<
                 " x %dt".formatted(duration),
                 x + 14 + GAP_BETWEEN_PACKS * stacks.size(),
                 y + (int) ((16f - font.lineHeight) / 2f) + 2,
-                16777215,
+                0xFFFFFFFF,
                 true);
     }
 
@@ -97,12 +98,12 @@ public class ConsumePackResearchMethodWidget extends AbstractResearchInfoWidget<
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         return false;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         return false;
     }
 

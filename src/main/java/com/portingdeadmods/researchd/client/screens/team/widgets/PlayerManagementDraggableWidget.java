@@ -1,12 +1,10 @@
 package com.portingdeadmods.researchd.client.screens.team.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.portingdeadmods.portingdeadlibs.utils.PlayerUtils;
-import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.team.TeamMember;
-import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.team.ResearchTeamScreen;
+import com.portingdeadmods.researchd.utils.GuiUtils;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -16,6 +14,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -119,16 +118,16 @@ public class PlayerManagementDraggableWidget extends AbstractDraggableWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (this.popupWidget.visible) {
-            return this.popupWidget.mouseClicked(mouseX, mouseY, button);
+            return this.popupWidget.mouseClicked(event, doubleClick);
         }
-        return this.managementList.mouseClicked(mouseX, mouseY, button);
+        return this.managementList.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(MouseButtonEvent event) {
+        return super.mouseReleased(event);
     }
 
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
@@ -139,20 +138,13 @@ public class PlayerManagementDraggableWidget extends AbstractDraggableWidget {
 
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float v) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, v);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, v);
 
         this.popupWidget.setPosition(
                 (guiGraphics.guiWidth() - this.popupWidget.getWidth()) / 2,
                 (guiGraphics.guiHeight() - this.popupWidget.getHeight()) / 2);
 
-        PoseStack poseStack = guiGraphics.pose();
-
-        poseStack.pushPose();
-        {
-            poseStack.translate(0, 0, RdZIndex.DRAGGABLE_WINDOW);
-            GuiUtils.drawImg(guiGraphics, WINDOW_TEXTURE, getX(), getY(), getWidth(), getHeight());
-        }
-        poseStack.popPose();
+        GuiUtils.drawImg(guiGraphics, WINDOW_TEXTURE, getX(), getY(), getWidth(), getHeight());
 
         this.managementList.extractRenderState(guiGraphics, mouseX, mouseY, v);
     }

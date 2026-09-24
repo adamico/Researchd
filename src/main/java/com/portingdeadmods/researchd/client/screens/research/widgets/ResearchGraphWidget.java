@@ -4,13 +4,11 @@ import static com.portingdeadmods.researchd.client.screens.research.ResearchScre
 import static com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget.PANEL_WIDTH;
 import static com.portingdeadmods.researchd.client.screens.research.graph.GraphLayoutManager.*;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.portingdeadmods.researchd.api.client.ResearchGraph;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.api.research.ResearchPage;
 import com.portingdeadmods.researchd.api.team.ResearchTeam;
-import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.research.AbstractResearchScreen;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreen;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget;
@@ -32,6 +30,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -317,7 +316,7 @@ public class ResearchGraphWidget extends AbstractWidget {
                 false);
 
         // Completion count (right-aligned)
-        guiGraphics.text(font, completionText, completionTextX, y, 0xFFFFFF, true);
+        guiGraphics.text(font, completionText, completionTextX, y, 0xFFFFFFFF, true);
     }
 
     @Override
@@ -368,13 +367,7 @@ public class ResearchGraphWidget extends AbstractWidget {
         }
         guiGraphics.disableScissor();
 
-        PoseStack poseStack = guiGraphics.pose();
-        poseStack.pushPose();
-        {
-            poseStack.translate(0, 0, RdZIndex.GRAPH_HEADER);
-            renderHeader(guiGraphics, w + 5);
-        }
-        poseStack.popPose();
+        renderHeader(guiGraphics, w + 5);
     }
 
     // TODO: Cache hovered node like the isHovered field
@@ -384,7 +377,7 @@ public class ResearchGraphWidget extends AbstractWidget {
         for (ResearchNode node : this.graph.nodes().values()) {
             if (node.isHovered()) {
                 Minecraft mc = Minecraft.getInstance();
-                if (!ResearchScreen.hasControlDown()) {
+                if (!mc.hasControlDown()) {
                     AbstractResearchScreen.setTooltip(List.of(
                             node.getInstance().getDisplayName(mc.level),
                             node.getInstance().getDescription(mc.level),
@@ -434,7 +427,7 @@ public class ResearchGraphWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (this.graph == null || this.graph.nodes() == null) {
             return false;
         }
@@ -447,7 +440,7 @@ public class ResearchGraphWidget extends AbstractWidget {
                 int index = entries.indexOf(node.getInstance());
                 if (index != -1) {
                     this.researchScreen.getSelectedResearchWidget().setSelectedResearch(entries.get(index));
-                    return super.mouseClicked(mouseX, mouseY, button);
+                    return super.mouseClicked(event, doubleClick);
                 }
             }
         }
@@ -455,10 +448,10 @@ public class ResearchGraphWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         if (
         /*Spaghetti.tryGetResearchScreen().popupWidgets.keySet().stream().noneMatch(AbstractWidget::isHovered) && */ super
-                .mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+                .mouseDragged(event, dragX, dragY)) {
             if (this.isHovered()) {
                 translate((int) dragX, (int) dragY);
             }

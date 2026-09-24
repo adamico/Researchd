@@ -5,6 +5,7 @@ import com.portingdeadmods.researchd.compat.RecipeViewerHelper;
 import com.portingdeadmods.researchd.impl.research.effect.ItemUnlockEffect;
 import com.portingdeadmods.researchd.translations.ResearchdTranslations;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ARGB;
@@ -31,7 +32,7 @@ public class UnlockItemEffectWidget extends AbstractResearchInfoWidget<ItemUnloc
         if (!this.icon.isEmpty()) {
             guiGraphics.item(this.icon, this.getX(), this.getY());
         } else {
-            guiGraphics.text(this.font, Component.literal("?"), this.getX() + 5, this.getY() + 4, 0xFFFFFF, false);
+            guiGraphics.text(this.font, Component.literal("?"), this.getX() + 5, this.getY() + 4, 0xFFFFFFFF, false);
         }
     }
 
@@ -48,7 +49,7 @@ public class UnlockItemEffectWidget extends AbstractResearchInfoWidget<ItemUnloc
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY, int button) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
         if (this.isHovered()) {
             RecipeViewerHelper.openRecipesByResult(this.value.getItem().getDefaultInstance());
         }

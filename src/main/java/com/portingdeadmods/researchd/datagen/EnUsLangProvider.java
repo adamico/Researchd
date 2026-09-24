@@ -10,6 +10,7 @@ import com.portingdeadmods.researchd.ResearchdRegistries;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.api.research.effects.ResearchEffectType;
 import com.portingdeadmods.researchd.api.research.methods.ResearchMethodType;
+import com.portingdeadmods.researchd.client.ResearchdKeybinds;
 import com.portingdeadmods.researchd.impl.research.ResearchPackImpl;
 import com.portingdeadmods.researchd.registries.ResearchEffectTypes;
 import com.portingdeadmods.researchd.registries.ResearchMethodTypes;
@@ -35,6 +36,8 @@ public final class EnUsLangProvider extends LanguageProvider {
         for (Map.Entry<String, String> entry : ResearchdTranslations.TRANSLATIONS.entrySet()) {
             add(entry.getKey(), entry.getValue());
         }
+
+        add(ResearchdKeybinds.CATEGORY.id().toLanguageKey("key.category"), Researchd.MODNAME);
 
         addBlock(RESEARCH_LAB_PART, "Research Lab Part");
         addBlock(RESEARCH_LAB_CONTROLLER, "Research Lab");

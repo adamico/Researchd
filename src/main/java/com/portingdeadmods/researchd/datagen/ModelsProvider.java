@@ -1,6 +1,7 @@
 package com.portingdeadmods.researchd.datagen;
 
 import com.portingdeadmods.researchd.Researchd;
+import com.portingdeadmods.researchd.client.renderers.ResearchPackTintSource;
 import com.portingdeadmods.researchd.registries.ResearchdBlocks;
 import com.portingdeadmods.researchd.registries.ResearchdItems;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -28,9 +29,12 @@ public class ModelsProvider extends ModelProvider {
         registerResearchLabModel(blockModels);
 
         // The item models themselves are hand-written in src/main/resources.
-        // TODO(26.1 port, 07): the research pack's layer-1 tint needs an item tint source; add it here.
         itemModels.itemModelOutput.accept(
-                ResearchdItems.RESEARCH_PACK.get(), ItemModelUtils.plainModel(Researchd.rl("item/research_pack")));
+                ResearchdItems.RESEARCH_PACK.get(),
+                ItemModelUtils.tintedModel(
+                        Researchd.rl("item/research_pack"),
+                        ItemModelUtils.constantTint(-1),
+                        new ResearchPackTintSource()));
         itemModels.itemModelOutput.accept(
                 ResearchdItems.GREEN_RESEARCH_PACK_ICON.get(),
                 ItemModelUtils.plainModel(Researchd.rl("item/green_research_pack_icon")));

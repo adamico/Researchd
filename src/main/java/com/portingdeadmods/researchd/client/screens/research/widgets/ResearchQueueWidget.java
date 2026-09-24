@@ -1,7 +1,5 @@
 package com.portingdeadmods.researchd.client.screens.research.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.client.ClientResearchIcon;
 import com.portingdeadmods.researchd.api.research.Research;
@@ -9,17 +7,18 @@ import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.api.research.ResearchStatus;
 import com.portingdeadmods.researchd.api.team.ResearchQueue;
 import com.portingdeadmods.researchd.api.team.ResearchTeam;
-import com.portingdeadmods.researchd.client.screens.RdZIndex;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreen;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreenWidget;
 import com.portingdeadmods.researchd.impl.ResearchProgress;
 import com.portingdeadmods.researchd.impl.research.SimpleResearchQueue;
 import com.portingdeadmods.researchd.networking.research.ResearchQueueRemovePayload;
+import com.portingdeadmods.researchd.utils.GuiUtils;
 import com.portingdeadmods.researchd.utils.researches.ResearchTeamHelperClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
@@ -82,12 +81,14 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
     }
 
     @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        super.onDrag(mouseX, mouseY, dragX, dragY);
+    protected void onDrag(MouseButtonEvent event, double dragX, double dragY) {
+        super.onDrag(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         int paddingX = 12;
         int paddingY = 14;
 
@@ -97,14 +98,14 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
             if (this.isHovering(null, (int) mouseX, (int) mouseY, index, paddingY + 17, getWidth(), getHeight() - 17)) {
                 this.removeResearch(index);
                 this.screen.getTechListWidget().startResearchButton.active = true;
-                return super.mouseClicked(mouseX, mouseY, button);
+                return super.mouseClicked(event, doubleClick);
             } else if (isHovering(null, (int) mouseX, (int) mouseY, index, paddingY, getWidth(), getHeight())) {
                 ResearchTeam team = ResearchTeamHelperClient.getTeam();
                 if (team == null) return false;
 
                 this.screen.getSelectedResearchWidget().setSelectedResearch(researchKey);
                 this.screen.showGraphForResearch(researchKey);
-                return super.mouseClicked(mouseX, mouseY, button);
+                return super.mouseClicked(event, doubleClick);
             }
         }
 
@@ -151,14 +152,7 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
             }
             guiGraphics.fillGradient(x, y + 17, x + PANEL_WIDTH, y + PANEL_HEIGHT, color, color);
 
-            PoseStack poseStack = guiGraphics.pose();
-
-            poseStack.pushPose();
-            {
-                poseStack.translate(0, 0, RdZIndex.QUEUE_REMOVE_ICON);
-                guiGraphics.text(font, "x", x + 10 - (font.width("x") / 2), y + 16, -1, false);
-            }
-            poseStack.popPose();
+            guiGraphics.text(font, "x", x + 10 - (font.width("x") / 2), y + 16, -1, false);
         }
     }
 
@@ -179,6 +173,7 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
         float progress = rmp == null ? 0f : (rmp.getProgress() / rmp.getMaxProgress());
 
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 ResearchStatus.RESEARCHED.getSpriteTexture(spriteType),
                 x,
                 y,
@@ -197,7 +192,7 @@ public class ResearchQueueWidget extends ResearchScreenWidget {
 
         if (isPanelHovered(guiGraphics, x, y, mouseX, mouseY) && hoverable) {
             int color = -2130706433;
-            guiGraphics.fillGradient(RenderType.guiOverlay(), x, y, x + 20, y + 20, color, color, 0);
+            guiGraphics.fillGradient(x, y, x + 20, y + 20, color, color);
         }
     }
 

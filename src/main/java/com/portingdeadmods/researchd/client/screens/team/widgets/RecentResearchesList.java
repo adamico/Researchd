@@ -1,6 +1,5 @@
 package com.portingdeadmods.researchd.client.screens.team.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.portingdeadmods.portingdeadlibs.utils.PlayerUtils;
 import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.ContainerWidget;
@@ -12,9 +11,11 @@ import java.util.Collection;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
+import org.joml.Matrix3x2fStack;
 
 public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
     public RecentResearchesList(
@@ -52,9 +53,10 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
             int mouseY) {
         Identifier resourcelocation =
                 ResearchTeamScreen.RECENT_RESEARCH_SPRITES.get(true, this.isItemHovered(index, mouseX, mouseY));
-        guiGraphics.blitSprite(resourcelocation, left, top, this.getItemWidth(), this.getItemHeight());
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED, resourcelocation, left, top, this.getItemWidth(), this.getItemHeight());
 
-        PoseStack poseStack = guiGraphics.pose();
+        Matrix3x2fStack poseStack = guiGraphics.pose();
         float scale = 1.75f;
         int padding = (int) ((34f - 16f * scale) / 2f); // 32 + 2 (smth smth border 2px)
 
@@ -74,7 +76,7 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
         if (level == null) return;
 
         Component researchName = research.getDisplayName(level);
-        guiGraphics.text(minecraft.font, researchName, left + 32, top + 4, 0xFFFFFF);
+        guiGraphics.text(minecraft.font, researchName, left + 32, top + 4, 0xFFFFFFFF);
 
         UUID researchedByUUID = research.getResearchedPlayer();
         String researchedBy;
@@ -90,17 +92,17 @@ public class RecentResearchesList extends ContainerWidget<ResearchInstance> {
 
         Component metadata = ResearchdTranslations.component(
                 ResearchdTranslations.Gui.RESEARCHED_BY_ON, researchedBy, researchedDate);
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
             float metadataScale = 0.75f;
-            poseStack.scale(metadataScale, metadataScale, metadataScale);
+            poseStack.scale(metadataScale, metadataScale);
             guiGraphics.text(
                     minecraft.font,
                     metadata,
                     (int) ((left + 32) / metadataScale),
                     (int) ((top + 4 + 4 + minecraft.font.lineHeight) / metadataScale),
-                    0xAAAAAA);
+                    0xFFAAAAAA);
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 }

@@ -1,18 +1,19 @@
 package com.portingdeadmods.researchd.client.screens.research.widgets;
 
-import com.portingdeadmods.portingdeadlibs.utils.renderers.GuiUtils;
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.ResearchdApi;
 import com.portingdeadmods.researchd.api.client.ClientResearchIcon;
 import com.portingdeadmods.researchd.api.research.ResearchManager;
 import com.portingdeadmods.researchd.api.research.ResearchPage;
 import com.portingdeadmods.researchd.client.screens.research.ResearchScreen;
+import com.portingdeadmods.researchd.utils.GuiUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +113,10 @@ public class ResearchPagesList extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
         if (button == 0) {
             for (int i = 0; i < this.pages.size(); i++) {
                 if (isButtonHovered(i, (int) mouseX, (int) mouseY)) {

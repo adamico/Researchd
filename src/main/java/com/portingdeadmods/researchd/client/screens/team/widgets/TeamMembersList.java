@@ -9,9 +9,11 @@ import java.util.Comparator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 
 public class TeamMembersList extends ContainerWidget<TeamMember> {
@@ -46,23 +48,29 @@ public class TeamMembersList extends ContainerWidget<TeamMember> {
             int mouseY) {
         Identifier resourcelocation = ResearchTeamScreen.TEAM_MEMBER_BUTTON_SPRITES.get(
                 this.isActive(), this.isItemHovered(index, mouseX, mouseY));
-        guiGraphics.blitSprite(resourcelocation, left, top, this.getItemWidth(), this.getItemHeight());
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED, resourcelocation, left, top, this.getItemWidth(), this.getItemHeight());
 
-        PlayerFaceRenderer.draw(guiGraphics, AllPlayersCache.getSkin(item.player()), left + 4, top + 4, 12);
+        PlayerFaceExtractor.extractRenderState(
+                guiGraphics, AllPlayersCache.getSkin(item.player()), left + 4, top + 4, 12);
         // guiGraphics.drawString(Minecraft.getInstance().font, this.playerNames.get(index), left + 4 + 12 + 2, top + 2,
         // -1, true);
-        renderScrollingString(
-                guiGraphics,
+        guiGraphics
+                .textRenderer()
+                .acceptScrolling(
+                        Component.literal(AllPlayersCache.getName(item.player()))
+                                .withStyle(ChatFormatting.WHITE),
+                        left + 4 + 12 + 2,
+                        left + 4 + 12 + 2,
+                        left + this.getItemWidth() - 1,
+                        top - 8,
+                        top + this.getItemHeight());
+        guiGraphics.text(
                 Minecraft.getInstance().font,
-                Component.literal(AllPlayersCache.getName(item.player())).withStyle(ChatFormatting.WHITE),
+                item.role().getDisplayName(),
                 left + 4 + 12 + 2,
-                left + 4 + 12 + 2,
-                top - 8,
-                left + this.getItemWidth() - 1,
-                top + this.getItemHeight(),
-                -1);
-        guiGraphics.text(Minecraft.getInstance().font, item.role().getDisplayName(), left + 4 + 12 + 2, top + 12, (int)
-                Mth.lerp(0.5, ChatFormatting.YELLOW.getColor(), ChatFormatting.GOLD.getColor()));
+                top + 12,
+                ARGB.opaque((int) Mth.lerp(0.5, ChatFormatting.YELLOW.getColor(), ChatFormatting.GOLD.getColor())));
     }
 
     public void resort() {

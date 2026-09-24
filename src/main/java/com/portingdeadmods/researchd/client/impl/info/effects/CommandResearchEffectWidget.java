@@ -12,9 +12,11 @@ import java.util.regex.Matcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -42,11 +44,17 @@ public class CommandResearchEffectWidget extends AbstractResearchInfoWidget<Comm
                 this.getY() + this.getSize().height,
                 BACKGROUND_COLOR);
         TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                .apply(COMMAND_BLOCK_FRONT);
+                .getAtlasManager()
+                .getAtlasOrThrow(AtlasIds.BLOCKS)
+                .getSprite(COMMAND_BLOCK_FRONT);
 
-        guiGraphics.blit(
-                (int) ((this.getX() + 1)), (int) ((this.getY() + 1)), 0, SPRITE_SIZE.width, SPRITE_SIZE.height, sprite);
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                sprite,
+                this.getX() + 1,
+                this.getY() + 1,
+                SPRITE_SIZE.width,
+                SPRITE_SIZE.height);
     }
 
     @Override
@@ -90,7 +98,7 @@ public class CommandResearchEffectWidget extends AbstractResearchInfoWidget<Comm
         switch (placeholder) {
             case CommandResearchEffect.PLAYER_NAME_PLACEHOLDER -> {
                 LocalPlayer player = Minecraft.getInstance().player;
-                if (player != null) return player.getGameProfile().getName();
+                if (player != null) return player.getGameProfile().name();
             }
             case CommandResearchEffect.TEAM_NAME_PLACEHOLDER -> {
                 ResearchTeam team = ResearchTeamHelperClient.getTeam();
@@ -102,12 +110,12 @@ public class CommandResearchEffectWidget extends AbstractResearchInfoWidget<Comm
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         return false;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         return false;
     }
 }

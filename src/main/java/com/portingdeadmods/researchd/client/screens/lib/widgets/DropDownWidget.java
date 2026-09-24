@@ -10,6 +10,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
@@ -72,7 +74,7 @@ public abstract class DropDownWidget<P extends LayoutElement> implements GuiEven
             height += option.height() + 2;
         }
 
-        guiGraphics.blitSprite(this.getBackgroundTexture(), x, y, width, height);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getBackgroundTexture(), x, y, width, height);
 
         // render background
         int curHeight = 0;
@@ -89,9 +91,9 @@ public abstract class DropDownWidget<P extends LayoutElement> implements GuiEven
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (hoveredOption != null && !this.options.isEmpty()) {
-            optionClicked(hoveredOption, (int) mouseX, (int) mouseY);
+            optionClicked(hoveredOption, (int) event.x(), (int) event.y());
             this.playDownSound(Minecraft.getInstance().getSoundManager());
         }
         return false;

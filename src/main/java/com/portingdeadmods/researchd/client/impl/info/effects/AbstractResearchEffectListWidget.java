@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.ARGB;
 import net.neoforged.neoforge.common.util.Size2i;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ public abstract class AbstractResearchEffectListWidget<T extends ResearchEffectL
         List<? extends ResearchEffect> effects = value.effects();
         for (int i = 0; i < effects.size(); i++) {
             if (i < this.effects.size()) {
-                this.effects.get(i).render(guiGraphics, mouseX, mouseY, partialTicks);
+                this.effects.get(i).extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
             }
             float padding = getPadding();
             if (i > 0 && i - 1 != effects.size()) {
@@ -147,10 +148,10 @@ public abstract class AbstractResearchEffectListWidget<T extends ResearchEffectL
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         for (AbstractResearchInfoWidget<? extends ResearchEffect> effect : this.effects) {
             if (effect.isHovered()) {
-                return effect.mouseClicked(mouseX, mouseY, button);
+                return effect.mouseClicked(event, doubleClick);
             }
         }
         return false;

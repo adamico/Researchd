@@ -17,7 +17,9 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -150,43 +152,43 @@ public class ResearchTeamSettingsScreen extends BaseTeamScreen {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         if (this.playerManagementWindow.isLazyHovered()) {
-            return this.playerManagementWindow.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            return this.playerManagementWindow.mouseDragged(event, dragX, dragY);
         } else if (this.transferOwnershipWindow.isLazyHovered()) {
-            return this.transferOwnershipWindow.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            return this.transferOwnershipWindow.mouseDragged(event, dragX, dragY);
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (this.playerManagementWindow.isHovered()) {
-            return this.playerManagementWindow.mouseClicked(mouseX, mouseY, button);
+            return this.playerManagementWindow.mouseClicked(event, doubleClick);
         } else if (this.transferOwnershipWindow.isHovered()) {
-            return this.transferOwnershipWindow.mouseClicked(mouseX, mouseY, button);
+            return this.transferOwnershipWindow.mouseClicked(event, doubleClick);
         } else if (this.transferOwnershipWindow.popupWidget.isHovered()) {
-            return this.transferOwnershipWindow.popupWidget.mouseClicked(mouseX, mouseY, button);
+            return this.transferOwnershipWindow.popupWidget.mouseClicked(event, doubleClick);
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (this.playerManagementWindow.isLazyHovered()) {
-            return this.playerManagementWindow.mouseReleased(mouseX, mouseY, button);
+            return this.playerManagementWindow.mouseReleased(event);
         } else if (this.transferOwnershipWindow.isLazyHovered()) {
-            return this.transferOwnershipWindow.mouseReleased(mouseX, mouseY, button);
+            return this.transferOwnershipWindow.mouseReleased(event);
         }
 
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         this.manageMembersButton.active = (ResearchTeamHelperClient.getRole().getPermissionLevel() > 0);
         this.transferOwnershipButton.active = (ResearchTeamHelperClient.getRole() == ResearchTeamRole.OWNER);
         this.teamNameEdit.setEditable(ResearchTeamHelperClient.getRole() == ResearchTeamRole.OWNER);
@@ -194,9 +196,10 @@ public class ResearchTeamSettingsScreen extends BaseTeamScreen {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 SCREEN_TEXTURE,
                 this.leftPos,
                 this.topPos,
@@ -209,5 +212,5 @@ public class ResearchTeamSettingsScreen extends BaseTeamScreen {
     }
 
     @Override
-    protected void renderBlurredBackground(float partialTick) {}
+    protected void extractBlurredBackground(GuiGraphicsExtractor guiGraphics) {}
 }

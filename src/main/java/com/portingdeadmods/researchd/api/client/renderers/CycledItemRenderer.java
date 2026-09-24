@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
 public class CycledItemRenderer {
     public static final float CYCLE_INTERVAL = 50.0f;
@@ -34,7 +35,9 @@ public class CycledItemRenderer {
 
     public void setItems(Ingredient ingredient) {
         this.items.clear();
-        for (ItemStack item : ingredient.items()) {
+        List<ItemStack> stacks =
+                ingredient.display().resolveForStacks(SlotDisplayContext.fromLevel(Minecraft.getInstance().level));
+        for (ItemStack item : stacks) {
             this.items.add(item.copyWithCount(this.count));
         }
     }
