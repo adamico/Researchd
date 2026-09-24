@@ -1,0 +1,18 @@
+{
+  "type": "researchd:simple",
+  "icon": {
+    "type": "researchd:item_research_icon",
+    "items": [{ "id": "researchd:research_lab" }]
+  },
+  "method": {
+    "type": "researchd:consume_research_pack",
+    "packs": ["researchd:overworld_pack"],
+    "count": 3,
+    "duration": 20
+  },
+  "requires_parent": true,
+  "display": {
+    "name": "Lab Test",
+    "desc": "Dev only: 3 Overworld Research Packs, 1 second each"
+  }
+}

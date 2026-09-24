@@ -39,3 +39,7 @@
 - **Visual differences from 05/06:** moved to ticket 19 (needs a person). The three layering markers now point to 19.
 - **KubeJS:** `ResearchBuilder.iconPack` now uses `asTemplate`. The excluded KubeJS code still has other 26.1 breakage, such as `iconStacks`; it returns with KubeJS 8.
 - **Access transformer:** `accesstransformer.cfg` still lists 1.21.1 targets. Some are gone, such as `GameProfileCache` and `renderFloatingItem`; others are already public on 26.1. NeoForge didn't complain at runtime. Clean it up during release readiness (17).
+- **Manual testing aids:**
+  - **Creative tab:** the Researchd tab is on page 2 of the creative inventory (26.1 has 14 vanilla tabs). It holds the Research Lab and the 3 Research Packs.
+  - **JEI:** it runs in the dev client (`localRuntime`), without Researchd's compat (14).
+  - **Test datapack:** `.scratch/port-26.1/dev-datapacks/researchd-lab-test` adds a root research, `researchd:lab_test`, that consumes 3 Overworld Research Packs at 20 ticks each. It's copied into `run/saves/*/datapacks` and `run/port26-smoke/datapacks`. The research method id is `researchd:consume_research_pack`.
