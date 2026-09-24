@@ -24,6 +24,18 @@ _Avoid_: Science pack
 
 ### Research and locks
 
+**Research Progression**:
+The server-wide lifecycle of a team's research: advancing the current research each tick, completing it, and revoking it. The only way a research becomes Researched or stops being Researched.
+_Avoid_: Research manager (that's the catalog of research definitions)
+
+**Complete**:
+To make a research Researched for a team, naturally when its progress fills or forced by an admin. It leaves the queue and its Research Effect is applied, whether or not any member is online.
+_Avoid_: Unlock (a research), finish
+
+**Revoke**:
+The inverse of complete. The research goes back to unresearched with its progress reset, its Research Effect is reversed, and queued researches whose parents are no longer met leave the queue. Completed descendants keep their state.
+_Avoid_: Remove (a research), uncomplete
+
 **Research Effect**:
 What completing a research changes for its team, such as unlocking a recipe, an item or a dimension, or adjusting a value.
 _Avoid_: Reward, unlock (as a noun)
