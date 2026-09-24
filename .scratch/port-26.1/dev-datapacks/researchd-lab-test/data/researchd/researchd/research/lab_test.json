@@ -6,7 +6,7 @@
   },
   "method": {
     "type": "researchd:consume_research_pack",
-    "packs": ["researchd:overworld_pack"],
+    "packs": ["researchd:overworld"],
     "count": 3,
     "duration": 20
   },
