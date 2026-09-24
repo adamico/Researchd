@@ -6,13 +6,13 @@
   },
   "method": {
     "type": "researchd:consume_research_pack",
-    "packs": ["researchd:overworld"],
+    "packs": ["researchd:lab_test_pack"],
     "count": 3,
     "duration": 20
   },
   "requires_parent": true,
   "display": {
     "name": "Lab Test",
-    "desc": "Dev only: 3 Overworld Research Packs, 1 second each"
+    "desc": "Dev only: 3 Lab Test Packs, 1 second each"
   }
 }

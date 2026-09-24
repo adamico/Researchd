@@ -1,0 +1,6 @@
+{
+  "type": "researchd:simple",
+  "color": {"r": 230, "g": 140, "b": 30},
+  "sorting_value": 4,
+  "display": {"name": "Lab Test Pack", "desc": "Dev only: feeds the Lab Test research"}
+}
