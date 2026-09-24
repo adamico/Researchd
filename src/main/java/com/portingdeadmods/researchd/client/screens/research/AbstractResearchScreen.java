@@ -5,6 +5,7 @@
  */
 package com.portingdeadmods.researchd.client.screens.research;
 
+import com.portingdeadmods.researchd.client.screens.lib.ClickDispatch;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.DropDownWidget;
 import com.portingdeadmods.researchd.client.screens.lib.widgets.PopupWidget;
 import java.util.*;
@@ -123,7 +124,7 @@ public abstract class AbstractResearchScreen extends Screen {
                 }
             }
         }
-        return super.mouseClicked(event, doubleClick);
+        return ClickDispatch.mouseClicked(this, event, doubleClick);
     }
 
     @Override
