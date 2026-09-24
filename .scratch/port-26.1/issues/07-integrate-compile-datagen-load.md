@@ -4,12 +4,38 @@
 
 **Blocked by:** 03, 04, 05, 06
 
-**Status:** ready-for-agent
+**Status:** agent part done (commit on `26.1`; push left to maintainer). Manual client checks are left to the maintainer.
 
-- [ ] Full compile with no errors
-- [ ] Datagen regenerated, including the 26.1 item model definitions; generated resources committed
-- [ ] The dedicated server starts with no Researchd errors in the log
-- [ ] The client starts, a world with the default Researchd datapack loads, and the research screen opens
+- [x] Full compile with no errors. `compileJava` is clean. The 1.21.1 `LabEnergyDrawTests` is excluded from the gametest source set until 08 (`TODO(26.1 port, 08)` in `build.gradle`).
+- [x] Datagen regenerated, including the 26.1 item model definitions. The output is **not committed**: `src/generated` is in upstream's `.gitignore`, and CI runs `runData` before `build`.
+- [x] The dedicated server starts with no Researchd errors in the log
+- [ ] The client starts, a world with the default Researchd datapack loads, and the research screen opens. Done by an agent: the client reached the title screen and joined a world with no errors. Still manual: open the research screen.
 - [ ] Manual: the Research Lab forms, accepts Research Packs through a Lab Part, and completes a research
 - [ ] Manual: team create, join and leave work with native teams
-- [ ] Anything noted by 03–06 (see the Notes in 03) is either fixed or filed as a follow-up ticket
+- [x] Anything noted by 03–06 (see the Notes in 03) is either fixed or filed as a follow-up ticket
+
+**Notes (for 08 and later tickets):**
+- **Agents run Minecraft headless only:** `runServer --nogui`, `runData` and the GameTest server. The maintainer runs the client.
+- **Headless server smoke test:**
+  - Run `./gradlew runServer --args="net.neoforged.fml.startup.Server --nogui --world <name>"`. `--args` replaces DevLaunch's whole argument list, so the main class goes first.
+  - A new server world leaves the default datapack disabled, because `server.properties` has `initial-enabled-packs=vanilla`. 1.21.1 behaves the same (`PackSource.FEATURE`).
+  - With the pack enabled, the server loads 9 researches and 3 Research Packs.
+- **Ready-made client world:** `run/saves/port26-smoke` has the default datapack enabled.
+- **Fixed at runtime (none of these showed at compile time):**
+  - `ClientLevelMixin` now matches the 26.1 constructor.
+  - `EditBoxMixin` targets `extractWidgetRenderState`.
+  - Blocks and items register through `registerBlock`/`registerItem`, so their properties carry the id 26.1 requires.
+  - The `research_lab` item keeps the Lab Controller's name (`overrideDescription`).
+  - **The default datapack is built in `AddPackFindersEvent`, before item components are bound.** It must not create `ItemStack`s there:
+    - `ItemResearchIcon.single(ItemLike)` builds a template.
+    - Pack recipes use `ResearchPackImpl.asTemplate`; `asStack` is now `asTemplate(key).create()`.
+  - **Payload codecs:** `Research`, `ResearchPack` and `ResearchIcon` use `fromCodecWithRegistriesTrusted`. On 26.1, ingredients (holder sets) need `RegistryOps`; with plain NBT the client disconnected on `update_researches`.
+  - **`pack.mcmeta`:** the root file declares formats 84–101 (resources–data). Dark mode declares 84.
+  - The default datapack logs research, pack and recipe entries it fails to encode, where it used to drop them silently.
+- **Workarounds for PDL bugs (ticket 20, marker `TODO(26.1 port, 20)`):**
+  - `DynamicPack` has no pack metadata, so `ResearchdExamplesSource` builds `Pack.Metadata` itself.
+  - `registerSimpleItemNoCreative` doesn't set the item id.
+  - The `handler_exposure(s)` key mismatch from 04.
+- **Visual differences from 05/06:** moved to ticket 19 (needs a person). The three layering markers now point to 19.
+- **KubeJS:** `ResearchBuilder.iconPack` now uses `asTemplate`. The excluded KubeJS code still has other 26.1 breakage, such as `iconStacks`; it returns with KubeJS 8.
+- **Access transformer:** `accesstransformer.cfg` still lists 1.21.1 targets. Some are gone, such as `GameProfileCache` and `renderFloatingItem`; others are already public on 26.1. NeoForge didn't complain at runtime. Clean it up during release readiness (17).
