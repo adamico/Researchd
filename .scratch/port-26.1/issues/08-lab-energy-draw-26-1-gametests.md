@@ -4,12 +4,12 @@
 
 **Blocked by:** 01 — Lab Energy Draw GameTests on 1.21.1; 07 — Integrate
 
-**Status:** agent part done (commit 5365ce8 on `26.1`; push left to maintainer; the manual GUI check is left to the maintainer)
+**Status:** done (commit 5365ce8 on `26.1`; push left to maintainer)
 
 - [x] The 26.1 GameTest wiring is in place and documented in the ticket's closing note, so 09–11 can reuse it
 - [x] All five scenarios from 01 have identical setup and assertions, and pass
 - [x] Energy supplied through a Lab Part via the 26.1 energy capability; extracting through a Lab Part gets nothing
-- [ ] Manual: the GUI energy bar shows when the draw is above 0 and is hidden at 0; config edits take effect after a reload
+- [x] Manual: the GUI energy bar shows when the draw is above 0 and is hidden at 0; config edits take effect after a reload
 
 **Notes from implementation:**
 - **Run:** `./gradlew runGameTestServer` (headless). It runs 6 required tests: the 5 below plus vanilla's `minecraft:always_pass`. On a pass it prints "All 6 required tests passed". A failing test fails the Gradle task.
@@ -23,5 +23,6 @@
   - **Pass the expected value first to `assertValueEqual`.** 26.1's message ("Expected %s to be %s: was %s") treats the first argument as the expected one.
 - **Scenarios:** same setup, ticks, timeouts (100, or 300 for fully powered) and assertions as 01. Two ids were renamed: `…_blocks_research` became `…_stalls_research`, because "blocked" is the glossary's avoided word for Locked.
 - **Mutation check:** letting `tryConsumeEnergy` pay without enough energy fails 3 of 5 (empty buffer, less than one tick, fully powered). That's the same as on 1.21.1.
+- **Manual check (maintainer, 2026-09-27):** in the dev client the bar was hidden with the draw at 0. After `research_lab_energy_usage` was set to 20 in `run/config/researchd-common.toml`, it showed. NeoForge's config watcher reloads the file while the game runs, so it takes effect without `/reload`.
 - **Leftover:** the run configs still pass `neoforge.enabledGameTestNamespaces`, a 1.21.1 property. On 26.1 vanilla's `always_pass` runs anyway. It does no harm; clean it up in 17.
 
