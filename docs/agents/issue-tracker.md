@@ -1,76 +1,74 @@
-# Issue tracker: local markdown in `.scratch/`
+# Issue tracker: GitHub Issues on the fork
 
-Tickets and specs are markdown files under `.scratch/`. **GitHub Issues are disabled on the fork `adamico/Researchd`**, so don't use `gh issue` (it fails), and never open issues on upstream `Porting-Dead-Mods/Researchd`. `.scratch/` is local-only (listed in `.git/info/exclude`), so never commit it to a code branch.
+Issues live in **`adamico/Researchd`** (the fork). Pass `--repo adamico/Researchd` to every `gh issue` command. Without it, `gh` may pick `origin`, which is upstream. Never open or comment on issues in upstream `Porting-Dead-Mods/Researchd`.
 
-## Layout
+Reference material that isn't a ticket, such as research notes, scripts and dev datapacks, stays in `.scratch/<track>/`. That folder is local-only and listed in `.git/info/exclude`.
 
-Each **track** is a folder with an optional spec and a numbered `issues/` directory:
+## Tracks
 
-```
-.scratch/
-├── port-26.1/            ← the 26.1 port (branch 26.1)
-│   ├── spec.md           ← the track's PRD (frontmatter: title, status, created)
-│   └── issues/NN-slug.md
-└── main-fixes/           ← 1.21.1 bug fixes (branch main)
-    └── issues/NN-slug.md
-```
+A **track** is a label:
 
-Start a new track folder when the work doesn't belong to an existing one (e.g. a different branch or initiative). Numbers are per track, two digits, and never reused.
+- `port-26.1`: the 26.1 port (branch `26.1`). Issues #1–#21 keep their old ticket numbers, so `TODO(26.1 port, NN)` markers in the code point to #NN.
+- `main-fixes`: 1.21.1 bug fixes (branch `main`). Old tickets 01–03 are now #22–#24.
 
-## Ticket format
+A track's spec (PRD) is an issue labelled `spec` plus the track label. It stays open and pinned. The spec for `port-26.1` is #25.
+
+Start a new track by creating a new label when the work doesn't belong to an existing track, for example a different branch or initiative.
+
+## Issue format
+
+Title: the ticket's title in plain words, with no number. Body:
 
 ```markdown
-# NN — Title in plain words
-
 **What to build:** what should be true when the ticket is done, and why.
 
-**Blocked by:** None — can start immediately   |   NN — Title of blocker (reason), NN, …
-
-**Status:** ready-for-agent
+**Blocked by:** None — can start immediately   |   #N — Title of blocker (reason), #N, …
 
 - [ ] Acceptance criterion
 - [ ] …
 ```
 
-Optional sections after the checklist: `## Shape`, `## Out of scope`, `**Notes from implementation:**`, `**Open:**`.
+Optional sections after the checklist: `## Shape`, `## Out of scope`. Notes from implementation and open questions go in comments.
 
-**Status values:**
-- `ready-for-agent`: can be picked up once every blocker is done
+**Status is a label** on open issues:
+
+- `ready-for-agent`: can be picked up once every blocker is closed
+- `in-progress`: claimed by a session
 - `blocked`: waiting on something the `Blocked by` line doesn't cover
 - `needs-human`: needs a manual step or a maintainer decision
-- `done (<commits and branch>; <what's left to the maintainer>)`
-- `agent part done (…)`: the agent's work is finished, but manual checks remain
+
+**Done** means the issue is closed as completed. The closing comment names the commits and branch, plus anything left to the maintainer (for example "push left to maintainer"). If the agent's work is finished but manual checks remain, keep the issue open, switch the label to `needs-human`, and say what's left in a comment.
 
 ## Operations
 
-- **Create a ticket**: write `.scratch/<track>/issues/NN-slug.md`, with the next free number in that track.
-- **Read a ticket**: read its file. For context, also read the track's `spec.md` and the tickets it's blocked by.
-- **List tickets**: `grep -H '^\*\*Status:\*\*' .scratch/<track>/issues/*.md` (and `^\*\*Blocked by:\*\*`).
-- **Comment**: append to `**Notes from implementation:**` or `**Open:**` in the ticket.
-- **Close**: set `**Status:** done (…)`, tick the checklist, and add notes on what was found along the way.
-- **After any edit** under `.scratch/`, run `docs/agents/sync-agent-docs.sh` to back up to the fork's `agent-docs` branch.
+- **Create**: `gh issue create --repo adamico/Researchd --title "…" --label <track> --label ready-for-agent --body-file <file>`
+- **Read**: `gh issue view N --repo adamico/Researchd --comments`. For context, also read the track's spec issue and the issues it's blocked by.
+- **List**: `gh issue list --repo adamico/Researchd --label <track> --state open --json number,title,labels,body`
+- **Comment**: `gh issue comment N --repo adamico/Researchd --body "…"`
+- **Change status**: `gh issue edit N --repo adamico/Researchd --remove-label ready-for-agent --add-label in-progress`
+- **Close**: tick the checklist in the body (`gh issue edit N --body-file …`), then `gh issue close N --repo adamico/Researchd --reason completed --comment "Done in <commits> on <branch>; <what's left to the maintainer>"`
 
 ## "Next ticket"
 
-In the current branch's track (`26.1` → `port-26.1`, `main` → `main-fixes`), pick the lowest-numbered ticket whose status is `ready-for-agent` and whose every `Blocked by` ticket is `done`. If the track has nothing ready, say so and list what blocks the lowest-numbered open tickets.
+Use the current branch's track (`26.1` → `port-26.1`, `main` → `main-fixes`). Pick the lowest-numbered open issue labelled `ready-for-agent` whose `Blocked by` issues are all closed. If nothing in the track is ready, say so and list what blocks the lowest-numbered open issues.
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: no.** Upstream PRs are opened by the maintainer and aren't triaged here.
+**PRs as a request surface: no.** The maintainer opens upstream PRs, and they aren't triaged here.
 
 ## When a skill says "publish to the issue tracker"
 
-Create a ticket file in the right track, as above.
+Create an issue in the right track, as above.
 
 ## When a skill says "fetch the relevant ticket"
 
-Read the ticket file, plus the track's `spec.md` if it has one.
+Run `gh issue view N --repo adamico/Researchd --comments`, and also read the track's spec issue.
 
 ## Wayfinding operations
 
-Used by `/wayfinder`. The **map** is the track's `spec.md` (or a `map.md` for a track with no spec), holding Notes / Decisions-so-far / Fog. The **child tickets** are that track's `issues/` files.
+Used by `/wayfinder`. The **map** is the track's spec issue (or an issue labelled `map` for a track with no spec), holding Notes / Decisions-so-far / Fog. The **child tickets** are the track's other issues.
 
-- **Blocking**: the ticket's `**Blocked by:**` line. A ticket is unblocked when every blocker's status is `done`.
-- **Frontier query**: the same as "Next ticket", but return every unblocked `ready-for-agent` ticket in number order.
-- **Claim**: set the status to `in-progress (<session/date>)`. That's the session's first write.
-- **Resolve**: close the ticket (above), then add a one-line pointer (gist + ticket number) to the map's Decisions-so-far.
+- **Blocking**: the issue's `**Blocked by:**` line. An issue is unblocked when every blocker is closed.
+- **Frontier query**: the same as "Next ticket", but return every unblocked `ready-for-agent` issue in number order.
+- **Claim**: swap `ready-for-agent` for `in-progress`. That's the session's first write.
+- **Resolve**: close the issue (above), then add a one-line pointer (gist + `#N`) to the map's Decisions-so-far by editing the map issue's body.

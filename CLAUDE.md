@@ -2,7 +2,7 @@
 
 ### Issue tracker
 
-Local markdown tickets in `.scratch/<track>/issues/` (GitHub Issues are disabled on the fork). See `docs/agents/issue-tracker.md`.
+GitHub Issues on the fork `adamico/Researchd` (always pass `--repo adamico/Researchd`, never upstream); tracks and statuses are labels. See `docs/agents/issue-tracker.md`.
 
 ### Domain docs
 
