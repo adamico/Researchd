@@ -20,7 +20,7 @@
   - Run `./gradlew runServer --args="net.neoforged.fml.startup.Server --nogui --world <name>"`. `--args` replaces DevLaunch's whole argument list, so the main class goes first.
   - A new server world leaves the default datapack disabled, because `server.properties` has `initial-enabled-packs=vanilla`. 1.21.1 behaves the same (`PackSource.FEATURE`).
   - With the pack enabled, the server loads 9 researches and 3 Research Packs.
-- **Ready-made client world:** `run/saves/port26-smoke` has the default datapack enabled.
+- **Ready-made world:** `run/port26-smoke` (the headless server's world) has the default datapack and `researchd-lab-test` enabled. A copy for the client is in `run/saves/port26-smoke` (made 2026-09-27).
 - **Fixed at runtime (none of these showed at compile time):**
   - `ClientLevelMixin` now matches the 26.1 constructor.
   - `EditBoxMixin` targets `extractWidgetRenderState`.
