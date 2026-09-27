@@ -12,6 +12,7 @@ import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.api.research.ResearchManager;
 import com.portingdeadmods.researchd.api.research.ResearchStatus;
 import com.portingdeadmods.researchd.api.team.*;
+import com.portingdeadmods.researchd.compat.KubeJSCompat;
 import com.portingdeadmods.researchd.impl.ResearchProgress;
 import com.portingdeadmods.researchd.impl.research.SimpleResearchQueue;
 import com.portingdeadmods.researchd.networking.research.ClientResearchCompletedPayload;
@@ -265,7 +266,7 @@ public class ResearchTeamImpl implements ResearchTeam, ValueEffectsHolder {
                     (ServerPlayer) player,
                     new ClientResearchCompletedPayload(researchKey, (int) completionTime, forced));
 
-            // TODO(26.1 port, KubeJS): fire KubeJS's research-completed event again once KubeJS 8 is out of beta
+            KubeJSCompat.fireResearchCompletedEvent((ServerPlayer) player, researchKey);
         }
         if (level == null || research == null) return;
 

@@ -5,6 +5,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.portingdeadmods.portingdeadlibs.utils.Result;
 import com.portingdeadmods.researchd.Researchd;
+import com.portingdeadmods.researchd.compat.ResearchdCompatHandler;
+import com.portingdeadmods.researchd.compat.kubejs.example.KubeJSExample;
 import com.portingdeadmods.researchd.resources.example.ExampleDatapackWriter;
 import java.nio.file.Path;
 import net.minecraft.ChatFormatting;
@@ -21,10 +23,10 @@ public class ExampleCommands {
     public static final ExampleDatapackWriter EXAMPLE_DATAPACK_WRITER = new ExampleDatapackWriter(true);
 
     public static LiteralCommandNode<CommandSourceStack> build() {
-        // TODO(26.1 port, KubeJS): bring back the "kubejs" subcommand (KubeJSExample.createExample()) once KubeJS 8 is
-        // out
-        // of beta
         return Commands.literal("example")
+                .then(Commands.literal("kubejs")
+                        .requires(p -> ResearchdCompatHandler.isKubeJSLoaded())
+                        .executes(ExampleCommands::createKubeJSExample))
                 .then(Commands.literal("datapack")
                         .executes(ExampleCommands::createDatapackExample)
                         // Optional "pack-name" param
@@ -67,6 +69,34 @@ public class ExampleCommands {
         } else {
             Exception error = result.error();
             source.sendFailure(Component.literal("Failed to create example datapack: ")
+                    .append(error.getMessage())
+                    .withStyle(ChatFormatting.RED));
+        }
+        return 0;
+    }
+
+    private static int createKubeJSExample(CommandContext<CommandSourceStack> ctx) {
+        CommandSourceStack source = ctx.getSource();
+        Result<Path, Exception> result = KubeJSExample.createExample();
+        if (result instanceof Result.Ok(Path value)) {
+            String filePath = value.toString();
+            String directory = value.getParent().toString();
+            source.sendSuccess(
+                    () -> Component.literal("Successfully created KubeJS example file at ")
+                            .append(Component.literal(filePath)
+                                    .withStyle(Style.EMPTY
+                                            .withColor(ChatFormatting.GOLD)
+                                            .withUnderlined(true)
+                                            .withClickEvent(new ClickEvent.OpenFile(directory))
+                                            .withHoverEvent(new HoverEvent.ShowText(
+                                                    Component.literal("Open containing directory")))))
+                            .append(Component.literal(" - (run '/reload' for the example to work)")
+                                    .withStyle(ChatFormatting.GRAY)),
+                    true);
+            return 1;
+        } else {
+            Exception error = result.error();
+            source.sendFailure(Component.literal("Failed to create KubeJS example file: ")
                     .append(error.getMessage())
                     .withStyle(ChatFormatting.RED));
         }

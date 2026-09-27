@@ -21,6 +21,7 @@ repositories {
     mavenCentral()
 
     maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.latvian.dev/releases' }
 
     // Jared's maven (JEI) and cursemaven (FTB) are kept for when those integrations come back.
     maven {
@@ -47,16 +48,14 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 // Integrations left out of the 26.1 build. Their code stays in the tree:
-// - EMI, Immersive Engineering, Create and KubeJS have no 26.1.2 build yet
+// - EMI, Immersive Engineering and Create have no 26.1.2 build yet
 // - JEI and FTB Teams / FTB Library come back once their compat is ported to 26.1
 sourceSets.main.java {
     exclude 'com/portingdeadmods/researchd/compat/EMICompat.java'
     exclude 'com/portingdeadmods/researchd/compat/JEICompat.java'
-    exclude 'com/portingdeadmods/researchd/compat/KubeJSCompat.java'
     exclude 'com/portingdeadmods/researchd/compat/ftbteams/**'
     exclude 'com/portingdeadmods/researchd/compat/immersiveengineering/**'
     exclude 'com/portingdeadmods/researchd/compat/jei/**'
-    exclude 'com/portingdeadmods/researchd/compat/kubejs/**'
     exclude 'com/portingdeadmods/researchd/mixins/create/**'
     exclude 'com/portingdeadmods/researchd/mixins/immersiveengineering/**'
 }
@@ -96,6 +95,8 @@ neoForge {
         gameTestServer {
             type = "gameTestServer"
             sourceSet = sourceSets.gametest
+            // Its own game directory, so only the GameTest KubeJS scripts load, not the dev client's
+            gameDirectory = project.file('run/gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -122,6 +123,15 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+var syncGameTestKubeJSScripts = tasks.register('syncGameTestKubeJSScripts', Sync) {
+    from 'src/gametest/kubejs/server_scripts'
+    into 'run/gametest/kubejs/server_scripts'
+}
+
+tasks.named('runGameTestServer').configure {
+    dependsOn syncGameTestKubeJSScripts
+}
+
 configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
@@ -133,6 +143,12 @@ dependencies {
     // Integration dependencies are out for now; see the source set excludes above.
     // JEI runs in the dev client without Researchd's compat, which comes back in 14.
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // KubeJS stays optional: compat code only touches its classes once it's loaded.
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    compileOnly "dev.latvian.mods:rhino:${rhino_version}"
+    localRuntime "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    localRuntime "dev.latvian.mods:rhino:${rhino_version}"
 }
 
 def parts = pdl_version.tokenize('.')

@@ -6,6 +6,10 @@ import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.portingdeadmods.researchd.Researchd;
+import com.portingdeadmods.researchd.ResearchdRegistries;
+import com.portingdeadmods.researchd.api.research.Research;
+import com.portingdeadmods.researchd.compat.KubeJSCompat;
+import com.portingdeadmods.researchd.impl.research.ResearchPackImpl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +40,7 @@ public class ReloadableRegistryManager<T> extends SimpleJsonResourceReloadListen
     }
 
     // TODO: Replace with linked hashmap and sort it
+    @SuppressWarnings("unchecked")
     @Override
     protected void apply(
             Map<Identifier, T> registryEntries, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
@@ -48,7 +53,19 @@ public class ReloadableRegistryManager<T> extends SimpleJsonResourceReloadListen
             }
         }
 
-        // KubeJS researches and Research Packs were merged in here; they come back with KubeJS 8 (26.1 port spec).
+        if (this.registry.equals(ResearchdRegistries.RESEARCH_KEY)) {
+            Map<Identifier, Research> kubeJSResearches = KubeJSCompat.getKubeJSResearches();
+            for (Map.Entry<Identifier, Research> entry : kubeJSResearches.entrySet()) {
+                builder.put(ResourceKey.create(this.registry, entry.getKey()), (T) entry.getValue());
+            }
+            Researchd.LOGGER.info("Loaded {} KubeJS researches", kubeJSResearches.size());
+        } else if (this.registry.equals(ResearchdRegistries.RESEARCH_PACK_KEY)) {
+            Map<Identifier, ResearchPackImpl> kubeJSPacks = KubeJSCompat.getKubeJSResearchPacks();
+            for (Map.Entry<Identifier, ResearchPackImpl> entry : kubeJSPacks.entrySet()) {
+                builder.put(ResourceKey.create(this.registry, entry.getKey()), (T) entry.getValue());
+            }
+            Researchd.LOGGER.info("Loaded {} KubeJS Research Packs", kubeJSPacks.size());
+        }
 
         this.byName = builder.build();
         Researchd.LOGGER.info("Loaded {} entries for registry {}", this.byName.size(), this.registry.identifier());

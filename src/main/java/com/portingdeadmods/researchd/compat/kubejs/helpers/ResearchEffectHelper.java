@@ -69,11 +69,11 @@ public class ResearchEffectHelper {
     }
 
     public static ResearchEffect unlockNether() {
-        return new DimensionUnlockEffect(Level.NETHER.location(), DimensionUnlockEffect.NETHER_SPRITE);
+        return new DimensionUnlockEffect(Level.NETHER.identifier(), DimensionUnlockEffect.NETHER_SPRITE);
     }
 
     public static ResearchEffect unlockEnd() {
-        return new DimensionUnlockEffect(Level.END.location(), DimensionUnlockEffect.END_SPRITE);
+        return new DimensionUnlockEffect(Level.END.identifier(), DimensionUnlockEffect.END_SPRITE);
     }
 
     /**

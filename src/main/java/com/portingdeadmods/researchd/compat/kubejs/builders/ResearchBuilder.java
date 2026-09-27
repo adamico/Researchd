@@ -19,8 +19,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -42,15 +42,16 @@ public class ResearchBuilder {
     }
 
     public ResearchBuilder icon(String... itemId) {
-        return this.iconStacks(Stream.of(itemId)
+        this.icon = new ItemResearchIcon(Stream.of(itemId)
                 .map(Identifier::parse)
-                .map(BuiltInRegistries.ITEM::get)
-                .map(Item::getDefaultInstance)
-                .toArray(ItemStack[]::new));
+                .map(BuiltInRegistries.ITEM::getValue)
+                .map(ItemStackTemplate::new)
+                .toList());
+        return this;
     }
 
     public ResearchBuilder iconStacks(ItemStack... stacks) {
-        this.icon = new ItemResearchIcon(Arrays.asList(stacks));
+        this.icon = ItemResearchIcon.ofStacks(Arrays.asList(stacks));
         return this;
     }
 

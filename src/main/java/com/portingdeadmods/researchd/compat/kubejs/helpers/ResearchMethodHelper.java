@@ -20,7 +20,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class ResearchMethodHelper {
 
     public static ResearchMethod consumeItem(String itemId, int count) {
-        Item item = BuiltInRegistries.ITEM.get(Identifier.parse(itemId));
+        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
         return new ConsumeItemResearchMethod(Ingredient.of(item), count);
     }
 
@@ -51,7 +51,7 @@ public class ResearchMethodHelper {
     }
 
     public static ResearchMethod checkItemPresence(String itemId, int count) {
-        Item item = BuiltInRegistries.ITEM.get(Identifier.parse(itemId));
+        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
         return new CheckItemPresenceResearchMethod(Ingredient.of(item), count);
     }
 
