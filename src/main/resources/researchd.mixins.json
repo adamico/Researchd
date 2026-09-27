@@ -3,6 +3,7 @@
   "package": "com.portingdeadmods.researchd.mixins",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "BoundTickingBlockEntityMixin",
     "CraftingMenuMixin",
     "RecipeManagerMixin",
     "RecipeMapMixin",

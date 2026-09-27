@@ -81,7 +81,10 @@ public final class RecipeBlockingTests {
             test("blocked_recipe_hint_is_skipped", RecipeBlockingTests::blockedRecipeHintIsSkipped),
             test(
                     "recipe_lists_drop_blocked_recipes_under_a_team_context",
-                    RecipeBlockingTests::recipeListsDropBlockedRecipesUnderATeamContext));
+                    RecipeBlockingTests::recipeListsDropBlockedRecipesUnderATeamContext),
+            test(
+                    "recipe_lists_update_once_research_completes",
+                    RecipeBlockingTests::recipeListsUpdateOnceResearchCompletes));
 
     private static GameTestCase test(String name, Consumer<GameTestHelper> function) {
         return new GameTestCase(NAME + "/" + name, MAX_TICKS, function);
@@ -251,6 +254,20 @@ public final class RecipeBlockingTests {
             helper.assertFalse(withContext.contains(id), blocked + " listed while Blocked");
         }
         helper.assertTrue(withContext.contains(vanillaRecipe("stick")), "stick missing while oak planks are allowed");
+        helper.succeed();
+    }
+
+    /** Lists are cached per team, so this proves completing a research refreshes them. */
+    private static void recipeListsUpdateOnceResearchCompletes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ResearchTeam team = TestTeams.create(helper, TestPlayers.create(helper));
+        ResourceKey<Recipe<?>> bread = vanillaRecipe("bread");
+        Supplier<Set<ResourceKey<Recipe<?>>>> listed =
+                () -> TestRecipes.underTeamContext(team, level, () -> TestRecipes.craftingRecipeIds(level));
+
+        helper.assertFalse(listed.get().contains(bread), "bread listed before its research");
+        TestTeams.complete(helper, team, BREAD);
+        helper.assertTrue(listed.get().contains(bread), "bread missing after its research");
         helper.succeed();
     }
 

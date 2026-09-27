@@ -28,10 +28,9 @@ import org.jetbrains.annotations.Nullable;
  * may invoke recipe lookups. {@code RecipeMapMixin} and {@code RecipeManagerMixin}
  * read the current frame and filter out recipes Blocked for that team.
  * <p>
- * Pushers (in core): {@code CraftingMenuMixin} and {@code ResultSlotMixin} for player crafting. Addons may push their own
+ * Pushers (in core): {@code CraftingMenuMixin} and {@code ResultSlotMixin} for player crafting, and
+ * {@code BoundTickingBlockEntityMixin}, which pushes the placer's team for every ticking BE. Addons may push their own
  * frames for code paths that don't tick through a BE.
- * TODO(26.1 port, 10): {@code BoundTickingBlockEntityMixin} pushes the placer's team for every
- * ticking BE again once that ticket puts it back in researchd.mixins.json.
  * <p>
  * Addons that need to filter recipe lookups which bypass the vanilla
  * {@link net.minecraft.world.item.crafting.RecipeManager} (e.g. mods with their own cached recipe

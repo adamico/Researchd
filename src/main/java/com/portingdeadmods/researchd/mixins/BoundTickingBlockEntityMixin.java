@@ -13,8 +13,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-// TODO(26.1 port, 10): not in researchd.mixins.json; recipe locking is switched off
-// until that ticket rewrites and re-enables this hook.
+/**
+ * Ticks each block entity with the team that placed it as the Team Context, so a machine's recipe lookups skip
+ * recipes Blocked for that team.
+ */
 @Mixin(targets = "net/minecraft/world/level/chunk/LevelChunk$BoundTickingBlockEntity")
 public abstract class BoundTickingBlockEntityMixin {
 
@@ -23,7 +25,7 @@ public abstract class BoundTickingBlockEntityMixin {
     private BlockEntity blockEntity;
 
     @WrapMethod(method = "tick")
-    private void researchd$pushOwnerContext(Operation<Void> original) {
+    private void researchd$pushPlacerTeamContext(Operation<Void> original) {
         Level level = this.blockEntity.getLevel();
         UUID teamId = (level == null || level.isClientSide())
                 ? null
