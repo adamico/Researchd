@@ -40,12 +40,12 @@ _Avoid_: Remove (a research), uncomplete
 What completing a research changes for its team, such as unlocking a recipe, an item or a dimension, or adjusting a value.
 _Avoid_: Reward, unlock (as a noun)
 
-**Locked**:
-The state of a recipe, item or dimension that a team has not yet unlocked through a Research Effect. Locked recipes don't craft or process for that team.
-_Avoid_: Blocked, restricted
+**Blocked**:
+The state of a recipe, item or dimension that an unlock Research Effect names and the team has not yet completed. A recipe is also Blocked when its result or any of its ingredients is a Blocked item. Blocked recipes don't craft or process for that team.
+_Avoid_: Locked, restricted
 
 **Team Context**:
-The team whose locks apply to a given recipe lookup: the crafting player's team, or the team of whoever placed the machine doing the lookup.
+The team whose Blocked recipes and items apply to a given recipe lookup: the crafting player's team, or the team of whoever placed the machine doing the lookup.
 _Avoid_: Owner, filter frame
 
 ### Energy
