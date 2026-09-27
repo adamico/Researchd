@@ -22,7 +22,7 @@ _Avoid_: Side block, slave block
 A consumable item that a Research Lab spends to advance research.
 _Avoid_: Science pack
 
-### Research and locks
+### Research and blocking
 
 **Research Progression**:
 The server-wide lifecycle of a team's research: advancing the current research each tick, completing it, and revoking it. The only way a research becomes Researched or stops being Researched.
