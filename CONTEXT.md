@@ -41,7 +41,7 @@ What completing a research changes for its team, such as unlocking a recipe, an 
 _Avoid_: Reward, unlock (as a noun)
 
 **Blocked**:
-The state of a recipe, item or dimension that an unlock Research Effect names and the team has not yet completed. A recipe is also Blocked when its result or any of its ingredients is a Blocked item. Blocked recipes don't craft or process for that team.
+The state of a recipe, item or dimension that an unlock Research Effect names and the team has not yet completed. A recipe is also Blocked when the result it makes, or an item it consumes, is a Blocked item. Blocked recipes don't craft or process for that team.
 _Avoid_: Locked, restricted
 
 **Team Context**:
