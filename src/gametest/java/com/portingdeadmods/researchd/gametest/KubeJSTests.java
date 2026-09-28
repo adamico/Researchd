@@ -2,6 +2,7 @@ package com.portingdeadmods.researchd.gametest;
 
 import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.ResearchdRegistries;
+import com.portingdeadmods.researchd.api.ResearchdApi;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.api.research.effects.ResearchEffect;
 import com.portingdeadmods.researchd.api.research.packs.ResearchPack;
@@ -20,12 +21,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -60,7 +63,8 @@ public final class KubeJSTests {
             test("script_declares_researches", KubeJSTests::scriptDeclaresResearches),
             test("script_research_completes", KubeJSTests::scriptResearchCompletes),
             test("unknown_icon_item_is_skipped", KubeJSTests::unknownIconItemIsSkipped),
-            test("invalid_research_is_left_out", KubeJSTests::invalidResearchIsLeftOut));
+            test("invalid_research_is_left_out", KubeJSTests::invalidResearchIsLeftOut),
+            test("script_recipe_unlock_blocks_until_researched", KubeJSTests::scriptRecipeUnlockBlocksUntilResearched));
 
     private static GameTestCase test(String name, Consumer<GameTestHelper> function) {
         return new GameTestCase(NAME + "/" + name, MAX_TICKS, function);
@@ -139,6 +143,24 @@ public final class KubeJSTests {
         helper.assertTrue(
                 !ResearchdManagers.getResearchesManager(helper.getLevel()).getLookup().containsKey(INVALID),
                 INVALID.identifier() + " was loaded");
+        helper.succeed();
+    }
+
+    /**
+     * The recipe a KubeJS research unlocks is Blocked for a new team through {@link ResearchdApi#isRecipeBlocked}, the
+     * query other mods (Craftworks' lock source) ask, and stops being Blocked once the research completes.
+     */
+    private static void scriptRecipeUnlockBlocksUntilResearched(GameTestHelper helper) {
+        ServerPlayer player = TestPlayers.create(helper);
+        ResearchTeam team = TestTeams.create(helper, player);
+        ResourceKey<Recipe<?>> goldBlock = ResourceKey.create(Registries.RECIPE, Identifier.parse("minecraft:gold_block"));
+        helper.assertTrue(
+                ResearchdApi.isRecipeBlocked(helper.getLevel(), team.getId(), goldBlock),
+                "gold_block isn't Blocked before its research");
+        TestTeams.complete(helper, team, ROOT);
+        helper.assertTrue(
+                !ResearchdApi.isRecipeBlocked(helper.getLevel(), team.getId(), goldBlock),
+                "gold_block is still Blocked after its research");
         helper.succeed();
     }
 
