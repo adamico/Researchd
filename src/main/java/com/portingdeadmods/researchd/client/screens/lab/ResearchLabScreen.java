@@ -29,6 +29,8 @@ import org.lwjgl.glfw.GLFW;
 public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMenu> {
     public static final Identifier BACKGROUND_TEXTURE = Researchd.rl("textures/gui/research_lab.png");
     public static final int BACKGROUND_TEXTURE_SIZE = 256;
+    public static final int BACKGROUND_WIDTH = 176;
+    public static final int BACKGROUND_HEIGHT = 198;
     public static final Identifier RESEARCH_PACK_TEXTURE = Researchd.rl("textures/item/research_pack_empty.png");
     public static final Identifier SLOT_SPRITE = Researchd.rl("slot_with_progress");
     public static final int PROGRESS_COLOR = ARGB.color(0, 225, 100);
@@ -41,6 +43,8 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
     public static final int SCROLLER_HEIGHT = 4;
     public static final int SCROLLER_TRACK_LENGTH = 154;
     public static final int ENERGY_BAR_X_OFFSET = 4;
+    // PDL's EnergyBarWidget is always this wide
+    public static final int ENERGY_BAR_WIDTH = 12;
     public static final int ENERGY_BAR_Y_OFFSET = 18;
     public static final int GHOST_PACK_OVERLAY_COLOR = ARGB.color(195, 139, 139, 139);
 
@@ -71,7 +75,7 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
             };
 
     public ResearchLabScreen(ResearchLabMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, 176, 198);
+        super(menu, playerInventory, title, screenWidth(), BACKGROUND_HEIGHT);
         this.titleLabelX = 8;
         this.titleLabelY = 6;
         this.inventoryLabelX = 8;
@@ -80,13 +84,23 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
         this.addRenderableWidget(this.scroller);
     }
 
+    // The FE bar sits right of the background and counts in the screen's width, so recipe viewers lay their panels
+    // out around it and the Lab and the bar are centred together
+    private static int screenWidth() {
+        return hasEnergyBar() ? BACKGROUND_WIDTH + ENERGY_BAR_X_OFFSET + ENERGY_BAR_WIDTH : BACKGROUND_WIDTH;
+    }
+
+    private static boolean hasEnergyBar() {
+        return ResearchLabControllerBE.getEnergyUsage() > 0;
+    }
+
     @Override
     protected void init() {
         super.init();
 
-        if (ResearchLabControllerBE.getEnergyUsage() > 0) {
+        if (hasEnergyBar()) {
             this.addRenderableWidget(new EnergyBarWidget(
-                    this.leftPos + this.imageWidth + ENERGY_BAR_X_OFFSET,
+                    this.leftPos + BACKGROUND_WIDTH + ENERGY_BAR_X_OFFSET,
                     this.topPos + ENERGY_BAR_Y_OFFSET,
                     new NeoEnergyHandlerWrapper(this.menu.getBlockEntity().getEnergyHandler()),
                     "FE",
@@ -127,8 +141,8 @@ public class ResearchLabScreen extends PDLAbstractContainerScreen<ResearchLabMen
                 this.topPos,
                 0,
                 0,
-                this.imageWidth,
-                this.imageHeight,
+                BACKGROUND_WIDTH,
+                BACKGROUND_HEIGHT,
                 BACKGROUND_TEXTURE_SIZE,
                 BACKGROUND_TEXTURE_SIZE);
         //
