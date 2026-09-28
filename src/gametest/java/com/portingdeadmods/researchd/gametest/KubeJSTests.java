@@ -64,7 +64,9 @@ public final class KubeJSTests {
             test("script_research_completes", KubeJSTests::scriptResearchCompletes),
             test("unknown_icon_item_is_skipped", KubeJSTests::unknownIconItemIsSkipped),
             test("invalid_research_is_left_out", KubeJSTests::invalidResearchIsLeftOut),
-            test("script_recipe_unlock_blocks_until_researched", KubeJSTests::scriptRecipeUnlockBlocksUntilResearched));
+            test("script_recipe_unlock_blocks_until_researched", KubeJSTests::scriptRecipeUnlockBlocksUntilResearched),
+            test("research_unlocking_a_recipe_is_named", KubeJSTests::researchUnlockingARecipeIsNamed),
+            test("research_name_is_its_display_name", KubeJSTests::researchNameIsItsDisplayName));
 
     private static GameTestCase test(String name, Consumer<GameTestHelper> function) {
         return new GameTestCase(NAME + "/" + name, MAX_TICKS, function);
@@ -161,6 +163,24 @@ public final class KubeJSTests {
         helper.assertTrue(
                 !ResearchdApi.isRecipeBlocked(helper.getLevel(), team.getId(), goldBlock),
                 "gold_block is still Blocked after its research");
+        helper.succeed();
+    }
+
+    /** The recipe sits inside the child's combined effect, and completed researches drop out. */
+    private static void researchUnlockingARecipeIsNamed(GameTestHelper helper) {
+        ServerPlayer player = TestPlayers.create(helper);
+        ResearchTeam team = TestTeams.create(helper, player);
+        ResourceKey<Recipe<?>> ironBlock = ResourceKey.create(Registries.RECIPE, Identifier.parse("minecraft:iron_block"));
+        helper.assertValueEqual(List.of(CHILD), ResearchdApi.researchesUnlocking(player, ironBlock), "before");
+        TestTeams.complete(helper, team, ROOT);
+        TestTeams.complete(helper, team, CHILD);
+        helper.assertValueEqual(List.of(), ResearchdApi.researchesUnlocking(player, ironBlock), "after");
+        helper.succeed();
+    }
+
+    private static void researchNameIsItsDisplayName(GameTestHelper helper) {
+        helper.assertValueEqual(
+                "KubeJS Root", ResearchdApi.researchName(helper.getLevel(), ROOT).getString(), "name");
         helper.succeed();
     }
 

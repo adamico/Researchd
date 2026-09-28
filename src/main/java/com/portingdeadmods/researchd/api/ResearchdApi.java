@@ -1,9 +1,13 @@
 package com.portingdeadmods.researchd.api;
 
 import com.portingdeadmods.portingdeadlibs.utils.PlayerUtils;
+import com.portingdeadmods.researchd.api.research.RegistryDisplay;
 import com.portingdeadmods.researchd.api.research.Research;
+import com.portingdeadmods.researchd.api.research.ResearchInstance;
 import com.portingdeadmods.researchd.api.research.ResearchManager;
+import com.portingdeadmods.researchd.api.research.effects.ResearchEffect;
 import com.portingdeadmods.researchd.api.research.effects.ResearchEffectData;
+import com.portingdeadmods.researchd.api.research.effects.ResearchEffectList;
 import com.portingdeadmods.researchd.api.research.effects.ResearchEffectManager;
 import com.portingdeadmods.researchd.api.research.serializers.ResearchEffectDataType;
 import com.portingdeadmods.researchd.api.team.ResearchTeam;
@@ -14,12 +18,18 @@ import com.portingdeadmods.researchd.data.ResearchdAttachments;
 import com.portingdeadmods.researchd.data.saved.TeamResearchEffectSavedData;
 import com.portingdeadmods.researchd.data.saved.TeamSavedData;
 import com.portingdeadmods.researchd.impl.research.ResearchManagerImpl;
+import com.portingdeadmods.researchd.impl.research.effect.RecipeUnlockEffect;
 import com.portingdeadmods.researchd.impl.research.effect.data.DimensionUnlockEffectData;
 import com.portingdeadmods.researchd.impl.research.effect.data.ItemUnlockEffectData;
 import com.portingdeadmods.researchd.impl.research.effect.data.RecipeUnlockEffectData;
 import com.portingdeadmods.researchd.registries.ResearchdEffectDataTypes;
+import com.portingdeadmods.researchd.utils.registries.ResearchdManagers;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -137,6 +147,53 @@ public final class ResearchdApi {
     public static boolean isItemBlocked(Level level, UUID teamId, ResourceKey<Item> itemKey) {
         ItemUnlockEffectData data = getEffectDataForTeam(level, teamId, ResearchdEffectDataTypes.ITEM_UNLOCK);
         return data != null && data.blockedItems().contains(itemKey);
+    }
+
+    /**
+     * The researches whose Research Effect unlocks {@code recipeId}, combined effects included, that {@code player}'s
+     * team hasn't completed yet, sorted by id. Datapack and KubeJS researches alike. Empty when the player has no team,
+     * on the client, or when nothing unlocks the recipe.
+     * <p>
+     * Takes and returns only vanilla types, so other mods can call it by reflection.
+     */
+    public static List<ResourceKey<Research>> researchesUnlocking(Player player, ResourceKey<Recipe<?>> recipeId) {
+        Level level = player.level();
+        if (level.isClientSide()) return List.of();
+        ResearchTeamManager teamManager = getTeamManager(level);
+        ResearchTeam team = teamManager == null ? null : teamManager.getTeamByPlayer(player);
+        if (team == null) return List.of();
+
+        return ResearchdManagers.getResearchesManager(level).getLookup().entrySet().stream()
+                .filter(entry -> unlocksRecipe(entry.getValue().researchEffect(), recipeId))
+                .map(Map.Entry::getKey)
+                .filter(key -> {
+                    ResearchInstance instance = team.getResearches().get(key);
+                    return instance == null || !instance.isResearched();
+                })
+                .sorted(Comparator.comparing(key -> key.identifier().toString()))
+                .toList();
+    }
+
+    private static boolean unlocksRecipe(ResearchEffect effect, ResourceKey<Recipe<?>> recipeId) {
+        if (effect instanceof RecipeUnlockEffect unlock) return unlock.recipes().contains(recipeId);
+        if (effect instanceof ResearchEffectList list) {
+            return list.effects().stream().anyMatch(e -> unlocksRecipe(e, recipeId));
+        }
+        return false;
+    }
+
+    /**
+     * The display name of {@code research}, as the research screen shows it, or its lang key when it isn't loaded.
+     * Takes and returns only vanilla types, so other mods can call it by reflection.
+     */
+    @SuppressWarnings("unchecked")
+    public static Component researchName(Level level, ResourceKey<Research> research) {
+        Research value =
+                ResearchdManagers.getResearchesManager(level).getLookup().get(research);
+        if (value instanceof RegistryDisplay<?> display) {
+            return ((RegistryDisplay<Research>) display).getDisplayName(research);
+        }
+        return Research.getLangName(research);
     }
 
     public static boolean isRecipeBlocked(Player player, ResourceKey<Recipe<?>> recipeId) {
