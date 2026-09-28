@@ -1,6 +1,8 @@
 package com.portingdeadmods.researchd.compat;
 
+import com.portingdeadmods.researchd.impl.research.ResearchPackListing;
 import java.util.*;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IFocusFactory;
@@ -8,23 +10,13 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.runtime.IRecipesGui;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class JEICompat {
     public static IJeiRuntime RUNTIME;
 
-    public static void openRecipes(Collection<RecipeHolder<?>> recipes) {
-        RegistryAccess access = Minecraft.getInstance().level.registryAccess();
-        openRecipesFor(recipes.stream()
-                .map(RecipeHolder::value)
-                .map(r -> r.getResultItem(access))
-                .toList());
-    }
-
+    // TODO(26.1 port, 14): open recipes by id again; Recipe#getResultItem is gone on 26.1
     public static void openRecipesFor(List<ItemStack> results) {
         if (RUNTIME != null) {
             IFocusFactory focusFactory = RUNTIME.getJeiHelpers().getFocusFactory();
@@ -41,6 +33,24 @@ public final class JEICompat {
             }
             IRecipesGui recipesGui = RUNTIME.getRecipesGui();
             recipesGui.show(List.copyOf(focuses.values()));
+        }
+    }
+
+    /**
+     * Adds and removes Research Pack entries. Before JEI's runtime starts it lists the packs at registration. With JEI's
+     * optional async start, a change landing between registration and the runtime is missed until JEI next restarts.
+     */
+    public static void updateResearchPacks(ResearchPackListing.Change change) {
+        if (RUNTIME == null) return;
+
+        IIngredientManager ingredientManager = RUNTIME.getIngredientManager();
+        if (!change.removed().isEmpty()) {
+            ingredientManager.removeIngredientsAtRuntime(
+                    VanillaTypes.ITEM_STACK, ResearchPackListing.stacks(change.removed()));
+        }
+        if (!change.added().isEmpty()) {
+            ingredientManager.addIngredientsAtRuntime(
+                    VanillaTypes.ITEM_STACK, ResearchPackListing.stacks(change.added()));
         }
     }
 

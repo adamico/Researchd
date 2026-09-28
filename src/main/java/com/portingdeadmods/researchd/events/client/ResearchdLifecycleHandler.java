@@ -4,6 +4,7 @@ import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.ResearchdConfig;
 import com.portingdeadmods.researchd.client.cache.ResearchGraphCache;
 import com.portingdeadmods.researchd.client.cache.ResearchTeamCache;
+import com.portingdeadmods.researchd.impl.research.ResearchPackListing;
 import com.portingdeadmods.researchd.translations.ResearchdTranslations;
 import java.net.URI;
 import net.minecraft.ChatFormatting;
@@ -47,6 +48,7 @@ public class ResearchdLifecycleHandler {
     @SubscribeEvent
     public static void onClientPlayerLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ResearchGraphCache.clearCache();
+        ResearchPackListing.CLIENT.clear();
         ResearchTeamCache.researchTeamMap = null;
         ResearchTeamCache.teamResearchEffectDataMap = null;
     }

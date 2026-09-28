@@ -49,13 +49,11 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 // Integrations left out of the 26.1 build. Their code stays in the tree:
 // - EMI, Immersive Engineering and Create have no 26.1.2 build yet
-// - JEI and FTB Teams / FTB Library come back once their compat is ported to 26.1
+// - FTB Teams / FTB Library come back once their compat is ported to 26.1
 sourceSets.main.java {
     exclude 'com/portingdeadmods/researchd/compat/EMICompat.java'
-    exclude 'com/portingdeadmods/researchd/compat/JEICompat.java'
     exclude 'com/portingdeadmods/researchd/compat/ftbteams/**'
     exclude 'com/portingdeadmods/researchd/compat/immersiveengineering/**'
-    exclude 'com/portingdeadmods/researchd/compat/jei/**'
     exclude 'com/portingdeadmods/researchd/mixins/create/**'
     exclude 'com/portingdeadmods/researchd/mixins/immersiveengineering/**'
 }
@@ -140,8 +138,11 @@ dependencies {
     implementation "com.github.Porting-Dead-Mods:Porting-Dead-Libs:${pdl_version}"
     //implementation files("pdl_cicd/portingdeadlibs-${pdl_version}-1.21.1.jar") // Local Deploy
 
-    // Integration dependencies are out for now; see the source set excludes above.
-    // JEI runs in the dev client without Researchd's compat, which comes back in 14.
+    // The other integrations are out for now; see the source set excludes above.
+    // JEI stays optional: its compat only loads once JEI calls the plugin. EMI reads the plugin's subtypes through
+    // its JEI bridge.
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
     // KubeJS stays optional: compat code only touches its classes once it's loaded.
