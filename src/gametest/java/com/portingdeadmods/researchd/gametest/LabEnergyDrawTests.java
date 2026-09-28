@@ -13,6 +13,7 @@ import com.portingdeadmods.researchd.resources.contents.ResearchdResearchPacks;
 import com.portingdeadmods.researchd.resources.contents.ResearchdResearches;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -53,7 +54,9 @@ public final class LabEnergyDrawTests {
     private static final String NAME = "lab_energy_draw";
 
     private static final List<GameTestCase> DRAW_OFF = List.of(
-            test("draw_zero_progresses_and_ignores_energy", LabEnergyDrawTests::drawZeroProgressesAndIgnoresEnergy));
+            test("draw_zero_progresses_and_ignores_energy", LabEnergyDrawTests::drawZeroProgressesAndIgnoresEnergy),
+            test("empty_lab_does_not_stall_a_stocked_one", LabEnergyDrawTests::emptyLabDoesNotStallAStockedOne),
+            test("two_stocked_labs_research_twice_as_fast", LabEnergyDrawTests::twoStockedLabsResearchTwiceAsFast));
     private static final List<GameTestCase> DRAW_ON = List.of(
             test("empty_buffer_stalls_research", LabEnergyDrawTests::emptyBufferStallsResearch),
             test("less_than_one_tick_stalls_research", LabEnergyDrawTests::lessThanOneTickStallsResearch),
@@ -103,6 +106,46 @@ public final class LabEnergyDrawTests {
             helper.assertTrue(scenario.progress() > 0, "Lab should progress with the draw off");
             helper.assertValueEqual(PACKS - 1, scenario.lab().itemCount(), "packs left");
             helper.assertValueEqual(1000, scenario.lab().energyStored(), "energy stored");
+            helper.succeed();
+        });
+    }
+
+    // Two Labs for one team, side by side in the 7x7x7 structure
+    private static final BlockPos LEFT_LAB = new BlockPos(1, 1, 3);
+    private static final BlockPos RIGHT_LAB = new BlockPos(5, 1, 3);
+    private static final int ONE_LAB_TICKS = 50;
+
+    private static void emptyLabDoesNotStallAStockedOne(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ResearchTeam team = TestTeams.create(helper, player);
+        TestTeams.queue(helper, team, RESEARCH);
+        TestLab stocked = TestLab.place(helper, player, LEFT_LAB, 1);
+        TestLab.place(helper, player, RIGHT_LAB, 1);
+        helper.runAtTickTime(STOCK_TICK, () -> stocked.insert(helper, ResearchPackImpl.asStack(PACK).copyWithCount(PACKS)));
+        helper.runAtTickTime(STOCK_TICK + ONE_LAB_TICKS, () -> {
+            float progress = team.getResearchProgresses().get(RESEARCH).getProgress();
+            helper.assertTrue(
+                    progress >= (ONE_LAB_TICKS - 2f) / PACK_DURATION,
+                    "a stocked Lab beside an empty one made " + progress + " progress in " + ONE_LAB_TICKS + " ticks");
+            helper.succeed();
+        });
+    }
+
+    private static void twoStockedLabsResearchTwiceAsFast(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ResearchTeam team = TestTeams.create(helper, player);
+        TestTeams.queue(helper, team, RESEARCH);
+        TestLab left = TestLab.place(helper, player, LEFT_LAB, 1);
+        TestLab right = TestLab.place(helper, player, RIGHT_LAB, 1);
+        helper.runAtTickTime(STOCK_TICK, () -> {
+            left.insert(helper, ResearchPackImpl.asStack(PACK).copyWithCount(PACKS));
+            right.insert(helper, ResearchPackImpl.asStack(PACK).copyWithCount(PACKS));
+        });
+        helper.runAtTickTime(STOCK_TICK + ONE_LAB_TICKS, () -> {
+            float progress = team.getResearchProgresses().get(RESEARCH).getProgress();
+            helper.assertTrue(
+                    progress >= 2 * (ONE_LAB_TICKS - 2f) / PACK_DURATION,
+                    "two stocked Labs made " + progress + " progress in " + ONE_LAB_TICKS + " ticks");
             helper.succeed();
         });
     }

@@ -31,10 +31,18 @@ import net.neoforged.neoforge.transfer.transaction.Transaction;
 public record TestLab(ResourceHandler<ItemResource> items, EnergyHandler energy) {
     /** Places a Research Lab as {@code player}, so it belongs to the player's team at the time. */
     public static TestLab place(GameTestHelper helper, Player player) {
+        return place(helper, player, new BlockPos(3, 1, 3), 3);
+    }
+
+    /**
+     * Places a Research Lab as {@code player} by clicking {@code at}, relative to the test structure, and returns a
+     * Lab Part found within {@code reach} blocks of it. Keep the reach below the gap to any other Lab.
+     */
+    public static TestLab place(GameTestHelper helper, Player player, BlockPos at, int reach) {
         ServerLevel level = helper.getLevel();
         ItemStack stack = ResearchdItems.RESEARCH_LAB.toStack();
         player.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        BlockPos target = helper.absolutePos(new BlockPos(3, 1, 3));
+        BlockPos target = helper.absolutePos(at);
         BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(target), Direction.UP, target, false);
         InteractionResult placed = ResearchdItems.RESEARCH_LAB
                 .get()
@@ -43,7 +51,7 @@ public record TestLab(ResourceHandler<ItemResource> items, EnergyHandler energy)
 
         // The Lab spans 3x3x3 around the clicked spot. Any Lab Part exposing both handlers will do
         boolean hasController = false;
-        for (BlockPos pos : BlockPos.betweenClosed(target.offset(-3, -3, -3), target.offset(3, 3, 3))) {
+        for (BlockPos pos : BlockPos.betweenClosed(target.offset(-reach, -reach, -reach), target.offset(reach, reach, reach))) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof ResearchLabControllerBE) hasController = true;
             if (!(be instanceof ResearchLabPartBE)) continue;
