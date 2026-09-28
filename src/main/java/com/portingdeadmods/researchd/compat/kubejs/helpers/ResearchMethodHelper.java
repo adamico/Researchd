@@ -20,7 +20,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class ResearchMethodHelper {
 
     public static ResearchMethod consumeItem(String itemId, int count) {
-        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
+        Item item = item(itemId);
         return new ConsumeItemResearchMethod(Ingredient.of(item), count);
     }
 
@@ -51,7 +51,7 @@ public class ResearchMethodHelper {
     }
 
     public static ResearchMethod checkItemPresence(String itemId, int count) {
-        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
+        Item item = item(itemId);
         return new CheckItemPresenceResearchMethod(Ingredient.of(item), count);
     }
 
@@ -61,5 +61,16 @@ public class ResearchMethodHelper {
 
     public static ResearchMethod or(ResearchMethod... methods) {
         return new OrResearchMethod(Arrays.asList(methods));
+    }
+
+    /**
+     * A research method's item must exist: a method on an item that doesn't could never complete. The error names
+     * the id, where 26.1's own "Ingredient can't contain air" would not.
+     */
+    private static Item item(String itemId) {
+        Identifier id = Identifier.parse(itemId);
+        return BuiltInRegistries.ITEM
+                .getOptional(id)
+                .orElseThrow(() -> new IllegalArgumentException("Research method item " + id + " doesn't exist"));
     }
 }

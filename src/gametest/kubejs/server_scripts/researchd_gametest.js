@@ -10,6 +10,16 @@ ResearchdEvents.registerResearchPacks(event => {
 });
 
 ResearchdEvents.registerResearches(event => {
+  // An icon id that names no item is skipped; the research still loads
+  event.create('researchd_kjs_test:unknown_icon')
+    .icon('researchd_kjs_test:no_such_item', 'minecraft:book')
+    .literalName('KubeJS Unknown Icon');
+
+  // Invalid when built (needs a parent, has none): left out without taking the others with it
+  event.create('researchd_kjs_test:invalid')
+    .requiresParents(true)
+    .literalName('KubeJS Invalid');
+
   event.create('researchd_kjs_test:root')
     .icon('minecraft:book')
     .literalName('KubeJS Root')

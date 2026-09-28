@@ -1,5 +1,6 @@
 package com.portingdeadmods.researchd.compat.kubejs.event;
 
+import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.api.research.packs.ResearchPack;
 import com.portingdeadmods.researchd.compat.kubejs.builders.ResearchPackBuilder;
 import com.portingdeadmods.researchd.impl.research.ResearchPackImpl;
@@ -38,7 +39,8 @@ public class RegisterResearchPacksKubeEvent implements KubeEvent {
                 ResearchPackImpl pack = builder.createObject();
                 researchPacks.put(builder.id, pack);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to create researchPack pack " + builder.id, e);
+                // One broken Research Pack is left out; throwing would drop every KubeJS Research Pack
+                Researchd.LOGGER.error("Research Pack {} from KubeJS is invalid, skipped", builder.id, e);
             }
         }
         return researchPacks;

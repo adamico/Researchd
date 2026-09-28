@@ -9,6 +9,7 @@ import com.portingdeadmods.researchd.api.team.ResearchTeam;
 import com.portingdeadmods.researchd.impl.research.ResearchPackImpl;
 import com.portingdeadmods.researchd.impl.research.SimpleResearch;
 import com.portingdeadmods.researchd.impl.research.effect.AndResearchEffect;
+import com.portingdeadmods.researchd.impl.research.icons.ItemResearchIcon;
 import com.portingdeadmods.researchd.impl.research.effect.DimensionUnlockEffect;
 import com.portingdeadmods.researchd.impl.research.effect.RecipeUnlockEffect;
 import com.portingdeadmods.researchd.impl.research.method.CheckItemPresenceResearchMethod;
@@ -24,6 +25,8 @@ import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -44,13 +47,20 @@ public final class KubeJSTests {
     private static final ResourceKey<Research> CHILD =
             ResourceKey.create(ResearchdRegistries.RESEARCH_KEY, Identifier.parse("researchd_kjs_test:child"));
 
+    private static final ResourceKey<Research> UNKNOWN_ICON =
+            ResourceKey.create(ResearchdRegistries.RESEARCH_KEY, Identifier.parse("researchd_kjs_test:unknown_icon"));
+    private static final ResourceKey<Research> INVALID =
+            ResourceKey.create(ResearchdRegistries.RESEARCH_KEY, Identifier.parse("researchd_kjs_test:invalid"));
+
     private static final String NAME = "kubejs";
     private static final int MAX_TICKS = 20;
 
     private static final List<GameTestCase> TESTS = List.of(
             test("script_declares_a_research_pack", KubeJSTests::scriptDeclaresAResearchPack),
             test("script_declares_researches", KubeJSTests::scriptDeclaresResearches),
-            test("script_research_completes", KubeJSTests::scriptResearchCompletes));
+            test("script_research_completes", KubeJSTests::scriptResearchCompletes),
+            test("unknown_icon_item_is_skipped", KubeJSTests::unknownIconItemIsSkipped),
+            test("invalid_research_is_left_out", KubeJSTests::invalidResearchIsLeftOut));
 
     private static GameTestCase test(String name, Consumer<GameTestHelper> function) {
         return new GameTestCase(NAME + "/" + name, MAX_TICKS, function);
@@ -111,6 +121,24 @@ public final class KubeJSTests {
         TestTeams.complete(helper, team, ROOT);
         TestTeams.complete(helper, team, CHILD);
         helper.assertTrue(team.getResearches().get(CHILD).isResearched(), "child isn't researched");
+        helper.succeed();
+    }
+
+    private static void unknownIconItemIsSkipped(GameTestHelper helper) {
+        SimpleResearch research = research(helper, UNKNOWN_ICON);
+        helper.assertValueEqual(
+                List.of(Items.BOOK),
+                ((ItemResearchIcon) research.researchIcon())
+                        .stacks().stream().map(ItemStack::getItem).toList(),
+                "icon items");
+        helper.succeed();
+    }
+
+    /** The other researches in the same script still load: see {@link #scriptDeclaresResearches}. */
+    private static void invalidResearchIsLeftOut(GameTestHelper helper) {
+        helper.assertTrue(
+                !ResearchdManagers.getResearchesManager(helper.getLevel()).getLookup().containsKey(INVALID),
+                INVALID.identifier() + " was loaded");
         helper.succeed();
     }
 

@@ -1,5 +1,6 @@
 package com.portingdeadmods.researchd.compat.kubejs.builders;
 
+import com.portingdeadmods.researchd.Researchd;
 import com.portingdeadmods.researchd.ResearchdRegistries;
 import com.portingdeadmods.researchd.api.research.Research;
 import com.portingdeadmods.researchd.api.research.effects.ResearchEffect;
@@ -14,11 +15,13 @@ import dev.latvian.mods.kubejs.script.SourceLine;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
@@ -41,10 +44,17 @@ public class ResearchBuilder {
         this.researchMethod = new ConsumeItemResearchMethod(Ingredient.of(Items.BOOK), 1);
     }
 
+    /** An icon id that names no item is skipped with a warning: an icon is only cosmetic. */
     public ResearchBuilder icon(String... itemId) {
         this.icon = new ItemResearchIcon(Stream.of(itemId)
                 .map(Identifier::parse)
-                .map(BuiltInRegistries.ITEM::getValue)
+                .flatMap(id -> {
+                    Optional<Item> item = BuiltInRegistries.ITEM.getOptional(id);
+                    if (item.isEmpty()) {
+                        Researchd.LOGGER.warn("Research {}: icon item {} doesn't exist, skipped", this.id, id);
+                    }
+                    return item.stream();
+                })
                 .map(ItemStackTemplate::new)
                 .toList());
         return this;
