@@ -10,6 +10,7 @@ A **track** is a label:
 
 - `port-26.1`: the 26.1 port (branch `26.1`). Issues #1–#21 keep their old ticket numbers, so `TODO(26.1 port, NN)` markers in the code point to #NN.
 - `main-fixes`: 1.21.1 bug fixes (branch `main`). Old tickets 01–03 are now #22–#24.
+- `unofficial-port`: publishing the fork's `26.1` line as "Researchd (Unofficial 26.1 Port)" on Modrinth and CurseForge. Spec #39.
 
 A track's spec (PRD) is an issue labelled `spec` plus the track label. It stays open and pinned. The spec for `port-26.1` is #25.
 
